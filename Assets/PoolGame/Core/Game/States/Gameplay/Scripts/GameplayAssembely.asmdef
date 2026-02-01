@@ -1,0 +1,4 @@
+{
+	"name": "GameplayAssembely",
+	"references":[ "GameAssembely", "CoreAssembly", "CorePluginsAssembly" ]
+}

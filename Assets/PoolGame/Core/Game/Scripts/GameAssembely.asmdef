@@ -1,0 +1,19 @@
+{
+    "name": "GameAssembely",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b98b35e386992d240a32dfed9d722bc8",
+        "GUID:09387808250bc054c90ebd72abc55759",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:0e88c810b4e5da74cb4f808801aa10c5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
