@@ -1,5 +1,6 @@
 ﻿using System;
 using PoolGame.Core.Events.Channels;
+using PoolGame.Gameplay.Shot;
 using UnityEngine;
 
 namespace PoolGame.Core.Game.States.Gameplay.Shot
@@ -10,7 +11,7 @@ namespace PoolGame.Core.Game.States.Gameplay.Shot
     [Serializable]
     public struct ShotData
     {
-        public IShotTarget ShotTarget;
+        public IShootable Shootable;
         
         public Vector3 ShotDirection;
 

@@ -9,7 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1694dc0e387707a488454b54ae98637e, type: 3}
-  m_Name: InputReader
+  m_Script: {fileID: 11500000, guid: dd2d0944b8864b249f716ccb9540d11f, type: 3}
+  m_Name: MouseScreenPosition
   m_EditorClassIdentifier: 
-  mouseScreenPosition: {fileID: 11400000, guid: 76dcbb1a3ba1aaf4a8e4a5b449f89a27, type: 2}
+  value: {x: 0, y: 0}
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []

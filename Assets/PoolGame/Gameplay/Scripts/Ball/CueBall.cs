@@ -1,11 +1,13 @@
-﻿using PoolGame.Core.Game.States.Gameplay.Shot;
+﻿using PoolGame.Core.Game.States.Gameplay.Ball;
+using PoolGame.Core.Game.States.Gameplay.Shot;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Values;
+using PoolGame.Gameplay.Shot;
 using UnityEngine;
 
-namespace PoolGame.Core.Game.States.Gameplay.Ball
+namespace PoolGame.Gameplay.Ball
 {
-    public class CueBall : BallController, IShotTarget
+    public class CueBall : BallController, IShootable
     {
         [SerializeField] private ShotRequestedChannel shotRequestedChannel;
         [SerializeField] private GameObjectValue cueBallValueStore;
@@ -53,7 +55,7 @@ namespace PoolGame.Core.Game.States.Gameplay.Ball
         
         private void ShotRequested(ShotData shotData)
         {
-            if (shotData.ShotTarget != (IShotTarget)this)
+            if (shotData.Shootable != (IShootable)this)
                 return;
             
             if (shotData.ShotPower01 < 0)

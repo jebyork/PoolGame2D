@@ -1,4 +1,5 @@
 ﻿using System;
+using PoolGame.Core.Observers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,7 @@ namespace PoolGame.Core.Input
     public class InputReader : ScriptableObject , GameInputActions.IGameplayActions
     {
         private GameInputActions _gameInputActions;
+        [SerializeField] private ObservableVector2 mouseScreenPosition;
 
         private void OnEnable()
         {
@@ -58,6 +60,7 @@ namespace PoolGame.Core.Input
         public void OnCursor(InputAction.CallbackContext context)
         {
             OnCursorEvent?.Invoke(context.ReadValue<Vector2>());
+            mouseScreenPosition.Value = context.ReadValue<Vector2>();
         }
         
 

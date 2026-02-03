@@ -1,15 +1,19 @@
-﻿using PoolGame.Core.Game.States.Gameplay.Shot;
+﻿using PoolGame.Core.Game.States.Gameplay;
+using PoolGame.Core.Game.States.Gameplay.Shot;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Input;
+using PoolGame.Gameplay.Shot;
+using PoolGame.Gameplay.ShotTargetPicker;
 using UnityEngine;
 
-namespace PoolGame.Core.Game.States.Gameplay
+namespace PoolGame.Gameplay
 {
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private InputReader inputReader;
         [SerializeField] private AimUpdatedChannel aimUpdatedChannel;
         [SerializeField] private ShotRequestedChannel shotRequestedChannel;
+        [SerializeField] private ShotTargetPickerStrategy shotTargetPickerStrategy;
 
         [Space] 
         [SerializeField] private float minPower01;
@@ -23,7 +27,8 @@ namespace PoolGame.Core.Game.States.Gameplay
         private Vector3 _cursorClickPosition;
         private AimSnapshot _latestAimSnapshot;
         private bool _hasAimSnapshot;
-        private IShotTarget _currentShotTarget;
+        private IShootable _currentShootable;
+        
 
         private bool _canGo;
         
@@ -76,21 +81,12 @@ namespace PoolGame.Core.Game.States.Gameplay
 
         private void OnPressedStarted()
         {
-            if (_camera == null || !_canGo)
+            ShotTargetPickResult target = shotTargetPickerStrategy.TryPick();
+            if (target.HasHit == false)
                 return;
 
-            Vector2 worldPoint = _camera.ScreenToWorldPoint(_cursorScreenPosition);
-
-            RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, 0f, cueBallLayerMask);
-            if (!hit)
-                return;
-
-            IShotTarget target = hit.collider.GetComponentInParent<IShotTarget>();
-            if (target == null)
-                return;
-
-            _currentShotTarget = target;
-            _cursorClickPosition = hit.collider.transform.position;
+            _currentShootable = target.Target;
+            _cursorClickPosition = target.HitPoint;
             _cursorClickPosition.z = 0;
             _isPulling = true;
             _hasAimSnapshot = false;
@@ -102,7 +98,7 @@ namespace PoolGame.Core.Game.States.Gameplay
             {
                 ShotData shotData = new()
                 {
-                    ShotTarget = _currentShotTarget,
+                    Shootable = _currentShootable,
                     ShotDirection = _latestAimSnapshot.ShotDirection ,
                     ShotPower01 = _latestAimSnapshot.ClampedPullPercentage
                 };
@@ -112,7 +108,7 @@ namespace PoolGame.Core.Game.States.Gameplay
             
             _isPulling = false;
             _hasAimSnapshot = false;
-            _currentShotTarget = null;
+            _currentShootable = null;
         }
         
         private void UpdateAim()
@@ -170,7 +166,7 @@ namespace PoolGame.Core.Game.States.Gameplay
             {
                 _isPulling = false;
                 _hasAimSnapshot = false;
-                _currentShotTarget = null;
+                _currentShootable = null;
             }
         }
     }

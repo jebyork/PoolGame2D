@@ -30,7 +30,7 @@ namespace PoolGame.Core.Game.States.Gameplay.GameplayDebug
 
         protected override void LogDebug()
         {
-            Logwin.Log("Shot Target: ", _latestShotData.ShotTarget, "Shooting Data");
+            Logwin.Log("Shot Target: ", _latestShotData.Shootable, "Shooting Data");
             Logwin.Log("Shot Direction: ", _latestShotData.ShotDirection, "Shooting Data");
             Logwin.Log("Shot Power: ", _latestShotData.ShotPower01, "Shooting Data");
         }
