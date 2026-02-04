@@ -7,11 +7,12 @@ namespace PoolGame.Gameplay.ShotTargetPicker
     {
         ShotTargetPickResult TryPick();
     }
+    
     public struct ShotTargetPickResult
     {
-        public IShootable Target;
-        public Vector3 HitPoint;
-        public bool HasHit;
+        public readonly IShootable Target;
+        public readonly Vector3 HitPoint;
+        public readonly bool HasHit;
 
         public ShotTargetPickResult(IShootable target , Vector3 hitPoint , bool hasHit)
         {

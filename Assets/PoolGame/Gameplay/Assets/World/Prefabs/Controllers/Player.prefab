@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6696826417178908024}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -49,11 +49,7 @@ MonoBehaviour:
   aimUpdatedChannel: {fileID: 11400000, guid: 087ef619ff0eebf4f8b483e710cf608a, type: 2}
   shotRequestedChannel: {fileID: 11400000, guid: a7d4d83d466743342be6bc74ddfd1022, type: 2}
   shotTargetPickerStrategy: {fileID: 11400000, guid: 029c8d7fc73452a4eb20f9fd1ee5c6ef, type: 2}
-  minPower01: 0.2
-  maxPullDistance: 3
-  cueBallLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
+  aimStrategyFactory: {fileID: 11400000, guid: 1d0a48700c8b42145b6355e87127eb74, type: 2}
 --- !u!114 &7110408313042644556
 MonoBehaviour:
   m_ObjectHideFlags: 0

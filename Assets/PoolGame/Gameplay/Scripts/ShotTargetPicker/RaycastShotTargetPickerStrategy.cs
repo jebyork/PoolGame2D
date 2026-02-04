@@ -1,5 +1,4 @@
-﻿using PoolGame.Core.Game.States.Gameplay.Shot;
-using PoolGame.Game.Scripts.ScreenToWorld;
+﻿using PoolGame.Game.Scripts.ScreenToWorld;
 using PoolGame.Gameplay.Shot;
 using UnityEngine;
 
@@ -15,27 +14,19 @@ namespace PoolGame.Gameplay.ShotTargetPicker
         {
             if (screenToWorld == null)
             {
-                return ReturnFailedShotTargetPickResult();
+                return FailedShotTargetPickResult();
             }
 
             
             Vector3 worldPoint = screenToWorld.ScreenToWorld();
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, 0f, cueBallLayerMask);
-            if (!hit) return ReturnFailedShotTargetPickResult();
+            if (!hit) return FailedShotTargetPickResult();
             
             IShootable shotTarget = hit.collider.GetComponentInParent<IShootable>();
             Vector3 position = hit.collider.transform.position;
             bool success = hit;
             
             return new ShotTargetPickResult(shotTarget,  position, success);
-        }
-        
-        private static ShotTargetPickResult ReturnFailedShotTargetPickResult()
-        {
-            return new ShotTargetPickResult(
-                null, 
-                Vector3.zero, 
-                false);
         }
     }
 }

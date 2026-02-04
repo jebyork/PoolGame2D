@@ -1820,6 +1820,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1827887037}
     m_Modifications:
+    - target: {fileID: 1072374498012847901, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: aimStrategy
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1072374498012847901, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: aimStrategyFactory
+      value: 
+      objectReference: {fileID: 11400000, guid: 1d0a48700c8b42145b6355e87127eb74, type: 2}
     - target: {fileID: 6617115191545740724, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

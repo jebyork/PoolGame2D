@@ -2,6 +2,8 @@ using PoolGame.Core.Game.Line;
 using PoolGame.Core.Game.States.Gameplay.Shot;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Values;
+using PoolGame.Gameplay;
+using PoolGame.Gameplay.Aim;
 using UnityEngine;
 
 namespace PoolGame.Core.Game.States.Gameplay.Ball
@@ -273,7 +275,7 @@ namespace PoolGame.Core.Game.States.Gameplay.Ball
             shotDirection = default;
             pullPercent01 = 0f;
 
-            pullPercent01 = _latestAimSnapshot.ClampedPullPercentage;
+            pullPercent01 = _latestAimSnapshot.ShotPower01;
             bool pullIsValid = pullPercent01 >= 0f;
             if (!pullIsValid)
                 return false;
@@ -288,7 +290,7 @@ namespace PoolGame.Core.Game.States.Gameplay.Ball
         
         private bool PullIsValid(AimSnapshot snapshot)
         {
-            return snapshot.ClampedPullPercentage >= 0f;
+            return snapshot.ShotPower01 >= 0f;
         }
         
         private bool IsBallHit(RaycastHit2D firstHit)

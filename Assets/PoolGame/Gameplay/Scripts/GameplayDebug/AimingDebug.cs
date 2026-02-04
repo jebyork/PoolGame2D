@@ -1,4 +1,6 @@
 ﻿using PoolGame.Core.JebDebug;
+using PoolGame.Gameplay;
+using PoolGame.Gameplay.Aim;
 using UnityEngine;
 
 namespace PoolGame.Core.Game.States.Gameplay.GameplayDebug
@@ -32,11 +34,11 @@ namespace PoolGame.Core.Game.States.Gameplay.GameplayDebug
         protected override void LogDebug()
         {
             Logwin.Log("Aiming Point: ", _lastAimSnapshot.AimingPoint, "Aiming Data");
-            Logwin.Log("Cursor World Point: ", _lastAimSnapshot.CursorWorldPoint, "Aiming Data");
-            Logwin.Log("Clamped End Aiming Point: ", _lastAimSnapshot.ClampedEndAimingPoint, "Aiming Data");
+            Logwin.Log("Cursor World Point: ", _lastAimSnapshot.CursorWorldPosition, "Aiming Data");
+            Logwin.Log("Clamped End Aiming Point: ", _lastAimSnapshot.AimEndPoint, "Aiming Data");
             Logwin.Log("Shot Direction: ", _lastAimSnapshot.ShotDirection, "Aiming Data");
-            Logwin.Log("Clamped Pull Distance: ", _lastAimSnapshot.ClampedPullDistance, "Aiming Data");
-            Logwin.Log("Clamped Pull Percentage: ", _lastAimSnapshot.ClampedPullPercentage, "Aiming Data");
+            Logwin.Log("Clamped Pull Distance: ", _lastAimSnapshot.PullDistance, "Aiming Data");
+            Logwin.Log("Clamped Pull Percentage: ", _lastAimSnapshot.ShotPower01, "Aiming Data");
         }
     }
 }
