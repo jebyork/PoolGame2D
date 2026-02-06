@@ -1,15 +1,13 @@
 ﻿using PoolGame.Core.Game.States.Gameplay.Ball;
-using PoolGame.Core.Game.States.Gameplay.Shot;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Values;
-using PoolGame.Gameplay.Shot;
+using PoolGame.Gameplay.Shooting;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
     public class CueBall : BallController, IShootable
     {
-        [SerializeField] private ShotRequestedChannel shotRequestedChannel;
         [SerializeField] private GameObjectValue cueBallValueStore;
         [SerializeField] private float maxImpulse = 10f;
         
@@ -17,22 +15,6 @@ namespace PoolGame.Gameplay.Ball
         
         public Vector3 AimPointWorld => transform.position;
         
-        private void OnEnable()
-        {
-            if (shotRequestedChannel != null)
-            {
-                shotRequestedChannel.Subscribe(ShotRequested);
-            }
-        }
-
-        private void OnDisable()
-        {
-            if (shotRequestedChannel != null)
-            {
-                shotRequestedChannel.Unsubscribe(ShotRequested);
-            }
-        }
-
         private void Awake()
         {
             if (cueBallValueStore)
@@ -52,18 +34,9 @@ namespace PoolGame.Gameplay.Ball
             
             _rb2D.AddForce(direction * impulse, ForceMode2D.Impulse);
         }
-        
-        private void ShotRequested(ShotData shotData)
+        public Vector3 GetPosition()
         {
-            if (shotData.Shootable != (IShootable)this)
-                return;
-            
-            if (shotData.ShotPower01 < 0)
-            {
-                return;
-            }
-            
-            ApplyShot(shotData.ShotDirection, shotData.ShotPower01);
+            return transform.position;
         }
     }
 }

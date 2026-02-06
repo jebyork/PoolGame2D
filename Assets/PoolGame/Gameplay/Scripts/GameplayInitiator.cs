@@ -1,5 +1,6 @@
 using PoolGame.Core.Game.States.Gameplay.Ball;
 using PoolGame.Core.Game.States.Gameplay.Table;
+using PoolGame.Gameplay;
 using UnityEngine;
 using UnityEngine.Serialization;
 

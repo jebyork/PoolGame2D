@@ -1,4 +1,5 @@
 ﻿using PoolGame.Core.Events.Channels;
+using PoolGame.Gameplay;
 using UnityEngine;
 
 namespace PoolGame.Core.Game.States.Gameplay

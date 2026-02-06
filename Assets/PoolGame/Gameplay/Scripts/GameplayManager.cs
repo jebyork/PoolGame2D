@@ -1,27 +1,24 @@
 using System;
 using PoolGame.Core.Events.Channels;
-using PoolGame.Core.Game.States.Gameplay.Shot;
+using PoolGame.Core.Game.States.Gameplay;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace PoolGame.Core.Game.States.Gameplay
+namespace PoolGame.Gameplay
 {
     public class GameplayManager : MonoBehaviour
     {
         [FormerlySerializedAs("gameStateChangeChannel")] [SerializeField] private GameplayStateChangeChannel gameplayStateChangeChannel;
-        [SerializeField] private ShotRequestedChannel shotRequestedChannel;
         [SerializeField] private BoolEventChannel ballsStoppedMovingEventChannel;
         private GameState _gameState;
 
         private void OnEnable()
         {
-            shotRequestedChannel?.Subscribe(ShotRequested);
             ballsStoppedMovingEventChannel?.Subscribe(BallsStoppedMoving);
         }
         
         private void OnDisable()
         {
-            shotRequestedChannel?.Unsubscribe(ShotRequested);
             ballsStoppedMovingEventChannel?.Unsubscribe(BallsStoppedMoving);
         }
         
@@ -33,13 +30,6 @@ namespace PoolGame.Core.Game.States.Gameplay
             }
         }
         
-        private void ShotRequested(ShotData data)
-        {
-            if (data.ShotPower01 > 0)
-            {
-                ChangeGameState(GameState.BallsInPlay);
-            }
-        }
 
         public void ChangeGameState(GameState gameState)
         {

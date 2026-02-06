@@ -1,4 +1,5 @@
 ﻿using System;
+using PoolGame.Core.Events.Channels;
 using PoolGame.Core.Observers;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +11,9 @@ namespace PoolGame.Core.Input
     {
         private GameInputActions _gameInputActions;
         [SerializeField] private ObservableVector2 mouseScreenPosition;
-
+        [SerializeField] private NoDataEventChannel startedAimingEvent;
+        [SerializeField] private NoDataEventChannel stoppedAimingEvent;
+        
         private void OnEnable()
         {
             if (_gameInputActions == null)
@@ -34,11 +37,6 @@ namespace PoolGame.Core.Input
         
         public event Action<Vector2> OnMoveEvent;
         
-        public event Action OnPressEvent;
-        public event Action OnPressCanceledEvent;
-        
-        public event Action<Vector2> OnCursorEvent;
-        
         public void OnMove(InputAction.CallbackContext context)
         {
             OnMoveEvent?.Invoke(context.ReadValue<Vector2>());
@@ -49,17 +47,16 @@ namespace PoolGame.Core.Input
             switch (context.phase)
             {
                 case InputActionPhase.Started:
-                    OnPressEvent?.Invoke();
+                    startedAimingEvent?.RaiseEvent(Unit.Default);
                     break;
                 case InputActionPhase.Canceled:
-                    OnPressCanceledEvent?.Invoke();
+                    stoppedAimingEvent?.RaiseEvent(Unit.Default);
                     break;
             }
         }
 
         public void OnCursor(InputAction.CallbackContext context)
         {
-            OnCursorEvent?.Invoke(context.ReadValue<Vector2>());
             mouseScreenPosition.Value = context.ReadValue<Vector2>();
         }
         
