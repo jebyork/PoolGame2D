@@ -1,5 +1,7 @@
-﻿using PoolGame.Core.Observers;
+﻿using PoolGame.Core.Helpers;
+using PoolGame.Core.Observers;
 using UnityEngine;
+
 
 namespace PoolGame.Gameplay.Shooting.Targeting
 {
@@ -11,12 +13,7 @@ namespace PoolGame.Gameplay.Shooting.Targeting
         
         public override IShootable GetShootable()
         {
-            if (Camera.main == null)
-                return null;
-            
-            Debug.Log("Here");
-            
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(mouseScreenPosition.Value);
+            Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, 0f, cueBallLayerMask);
             return !hit ? 
                 null : 

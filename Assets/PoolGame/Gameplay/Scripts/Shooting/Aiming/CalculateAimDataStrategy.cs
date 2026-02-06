@@ -11,9 +11,9 @@ namespace PoolGame.Gameplay.Shooting.Aiming
         {
             Vector3 direction = CalculateDirection(aimingCalculationData);
             direction.z = 0;
-            float pullDistance  = direction.magnitude;
+            float pullDistance = direction.magnitude;
             float powerPercent = Mathf.Clamp01(pullDistance / MaxPullDistance);
-
+            
             Vector3 normalizedDirection =
                 pullDistance > 0f ? direction.normalized : Vector3.zero;
 

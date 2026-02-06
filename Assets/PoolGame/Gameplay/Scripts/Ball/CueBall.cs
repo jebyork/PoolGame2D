@@ -2,6 +2,7 @@
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Values;
 using PoolGame.Gameplay.Shooting;
+using PoolGame.Gameplay.Shooting.Aiming;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
@@ -13,7 +14,6 @@ namespace PoolGame.Gameplay.Ball
         
         private Rigidbody2D _rb2D;
         
-        public Vector3 AimPointWorld => transform.position;
         
         private void Awake()
         {
@@ -26,17 +26,18 @@ namespace PoolGame.Gameplay.Ball
         
         public void ApplyShot(Vector3 direction , float power01)
         {
-            if (_rb2D == null || direction.IsNearlyZero()) 
-                return;
-            
-            direction.Normalize();
-            float impulse = Mathf.Clamp01(power01) * maxImpulse;
-            
+            if (_rb2D == null || direction.IsNearlyZero()) return;
+
+            float impulse = power01 * maxImpulse;
             _rb2D.AddForce(direction * impulse, ForceMode2D.Impulse);
         }
         public Vector3 GetPosition()
         {
             return transform.position;
+        }
+        public void Shoot(AimingData aimingData)
+        {
+            ApplyShot(aimingData.Direction, aimingData.Power01);
         }
     }
 }

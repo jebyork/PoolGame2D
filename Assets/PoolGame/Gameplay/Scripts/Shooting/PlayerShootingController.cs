@@ -1,4 +1,6 @@
-﻿using PoolGame.Core.Observers;
+﻿using System.Runtime.CompilerServices;
+using PoolGame.Core.Helpers;
+using PoolGame.Core.Observers;
 using PoolGame.Gameplay.Shooting.Aiming;
 using PoolGame.Gameplay.Shooting.Targeting;
 using UnityEngine;
@@ -10,29 +12,34 @@ namespace PoolGame.Gameplay.Shooting
         [SerializeField] private GetShootableTagetStrategy getShootableTagetStrategy;
         [SerializeField] private ObservableVector2 mouseScreenPosition;
         [SerializeField] private CalculateAimDataStrategy  calculateAimDataStrategy;
+
+        [Space] 
+        [SerializeField] private AimingCalculationDataObserver calculationDataObserver;
+        [SerializeField] private AimingDataObserver aimingDataObserver;
+            
         
         private AimingCalculationData _currentCalculationData;
         private AimingData _currentAimingData;
         
         public void OnStartedAiming()
         {
-            Debug.Log("Here");
+            Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             IShootable shootable = getShootableTagetStrategy.GetShootable();
             _currentCalculationData = new AimingCalculationData
             {
                 Shootable = shootable,
-                InitialMousePos = mouseScreenPosition.Value,
-                CurrentMousePos = mouseScreenPosition.Value,
+                InitialMousePos = worldPoint,
+                CurrentMousePos = worldPoint,
             };
-
-            if (_currentCalculationData.Shootable != null)
-            {
-                Debug.Log("Has Shootable");
-            }
+            calculationDataObserver.Value = _currentCalculationData;
+            
         }
 
         public void OnStoppedAiming()
         {
+            if (_currentCalculationData.Shootable == null) return;
+            
+            _currentCalculationData.Shootable.Shoot(_currentAimingData);
             _currentCalculationData.Shootable = null;
         }
 
@@ -40,12 +47,9 @@ namespace PoolGame.Gameplay.Shooting
         {
             if(_currentCalculationData.Shootable == null) return;
             
-            _currentCalculationData.CurrentMousePos = mouseScreenPosition.Value;
+            _currentCalculationData.CurrentMousePos = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             _currentAimingData = calculateAimDataStrategy.CalculateAimData(_currentCalculationData);
-            
-            Logwin.Log("Power", _currentAimingData.Power01, "Shooting");
-            Logwin.Log("Direction", _currentAimingData.Direction, "Shooting");
-            
+            aimingDataObserver.Value = _currentAimingData;
         }
     }
 }

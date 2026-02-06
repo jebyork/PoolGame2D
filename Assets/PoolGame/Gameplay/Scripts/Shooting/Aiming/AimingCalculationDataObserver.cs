@@ -1,19 +1,14 @@
-﻿using UnityEngine;
+﻿using PoolGame.Core.Observers;
+using UnityEngine;
 
 namespace PoolGame.Gameplay.Shooting.Aiming
 {
-    public struct AimingData
+    
+    [CreateAssetMenu(fileName = "Aiming Calculation Data Observer" , menuName = "Shooting/Aiming/Aiming Calculation Data Observer" , order = 0)]
+    public class AimingCalculationDataObserver : Observer<AimingCalculationData>
     {
-        public readonly Vector3 Direction;
-        public readonly float Power01;
-
-        public AimingData(Vector3 direction , float power01)
-        {
-            Direction = direction;
-            Power01 = power01;
-        }
     }
-
+    
     public struct AimingCalculationData
     {
         public IShootable Shootable;

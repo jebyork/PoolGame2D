@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f89d690a4de245ed96bf50f789e42cfc, type: 3}
   m_Name: Calculate Aim From Shootable
   m_EditorClassIdentifier: 
-  MaxPullDistance: 1.5
+  MaxPullDistance: 10

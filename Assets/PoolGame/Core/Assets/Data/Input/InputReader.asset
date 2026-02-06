@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: InputReader
   m_EditorClassIdentifier: 
   mouseScreenPosition: {fileID: 11400000, guid: 76dcbb1a3ba1aaf4a8e4a5b449f89a27, type: 2}
+  startedAimingEvent: {fileID: 11400000, guid: a45af9ab285ba794881d8ddf5acf0adf, type: 2}
+  stoppedAimingEvent: {fileID: 11400000, guid: 4ccf0448bb8f8bd469e87c8c766179bb, type: 2}

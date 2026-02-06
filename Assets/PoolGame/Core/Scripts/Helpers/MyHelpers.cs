@@ -49,5 +49,13 @@ namespace PoolGame.Core.Helpers
                 prev = next;
             }
         }
+
+        public static Vector3 GetScreenToWorldPosition(Vector3 screenPosition)
+        {
+            if (Camera.main == null)
+                return Vector3.zero;
+            
+            return Camera.main.ScreenToWorldPoint(screenPosition);
+        }
     }
 }
