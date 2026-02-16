@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PoolGame.Gameplay.Shooting.Targeting
 {
     [CreateAssetMenu(fileName = "Get Shootable Under Mouse", menuName = "Shooting/Getting Shootable/Get Shootable Under Mouse")]
-    public class GetShootableUnderMouse : GetShootableTagetStrategy
+    public class GetShootableUnderMouse : GetShootableTargetStrategy
     {
         [SerializeField] private LayerMask cueBallLayerMask;
         [SerializeField] private ObservableVector2 mouseScreenPosition;

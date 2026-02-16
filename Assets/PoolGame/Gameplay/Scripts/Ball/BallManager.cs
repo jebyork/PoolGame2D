@@ -2,6 +2,7 @@
 using System.Linq;
 using PoolGame.Core.Events.Channels;
 using PoolGame.Core.Helpers;
+using PoolGame.Gameplay.Ball;
 using UnityEngine;
 
 namespace PoolGame.Core.Game.States.Gameplay.Ball

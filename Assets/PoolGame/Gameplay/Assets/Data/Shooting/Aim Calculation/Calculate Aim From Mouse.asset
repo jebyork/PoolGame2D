@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77ce0e6dd74748769590e791387722ea, type: 3}
   m_Name: Calculate Aim From Mouse
   m_EditorClassIdentifier: 
-  MaxPullDistance: 10
+  maxPullDistance: 100

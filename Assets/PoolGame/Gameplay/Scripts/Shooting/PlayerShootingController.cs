@@ -2,6 +2,7 @@
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
 using PoolGame.Gameplay.Shooting.Aiming;
+using PoolGame.Gameplay.Shooting.CanShoot;
 using PoolGame.Gameplay.Shooting.Targeting;
 using UnityEngine;
 
@@ -9,9 +10,10 @@ namespace PoolGame.Gameplay.Shooting
 {
     public class PlayerShootingController : MonoBehaviour
     {
-        [SerializeField] private GetShootableTagetStrategy getShootableTagetStrategy;
+        [SerializeField] private GetShootableTargetStrategy getShootableTargetStrategy;
         [SerializeField] private ObservableVector2 mouseScreenPosition;
         [SerializeField] private CalculateAimDataStrategy  calculateAimDataStrategy;
+        [SerializeField] private CanShootStrategy canShootStrategy;
 
         [Space] 
         [SerializeField] private AimingCalculationDataObserver calculationDataObserver;
@@ -24,7 +26,7 @@ namespace PoolGame.Gameplay.Shooting
         public void OnStartedAiming()
         {
             Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
-            IShootable shootable = getShootableTagetStrategy.GetShootable();
+            IShootable shootable = getShootableTargetStrategy.GetShootable();
             _currentCalculationData = new AimingCalculationData
             {
                 Shootable = shootable,
@@ -37,9 +39,10 @@ namespace PoolGame.Gameplay.Shooting
 
         public void OnStoppedAiming()
         {
-            if (_currentCalculationData.Shootable == null) return;
-            
-            _currentCalculationData.Shootable.Shoot(_currentAimingData);
+            if (canShootStrategy.CanShoot())
+            {
+                _currentCalculationData.Shootable.Shoot(_currentAimingData);
+            }
             _currentCalculationData.Shootable = null;
         }
 

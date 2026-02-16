@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PoolGame.Core.Game.States.Gameplay.Ball
+namespace PoolGame.Gameplay.Ball
 {
     public class BallController : MonoBehaviour
     {

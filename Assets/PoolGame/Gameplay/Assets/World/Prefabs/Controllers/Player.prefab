@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6617115191545740724}
   - component: {fileID: 3219451295420590550}
-  - component: {fileID: 8434478340007554097}
-  - component: {fileID: 881980310855467957}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -49,61 +47,5 @@ MonoBehaviour:
   getShootableTagetStrategy: {fileID: 11400000, guid: adf9c523182341a4e9aa4113b842ac47, type: 2}
   mouseScreenPosition: {fileID: 11400000, guid: 76dcbb1a3ba1aaf4a8e4a5b449f89a27, type: 2}
   calculateAimDataStrategy: {fileID: 11400000, guid: 5408580e9911a5f4c91ff7f4669ead57, type: 2}
---- !u!114 &8434478340007554097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6696826417178908024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 124d487a78054d82bf2565c40f1a4144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: a45af9ab285ba794881d8ddf5acf0adf, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3219451295420590550}
-        m_TargetAssemblyTypeName: PoolGame.Gameplay.Shooting.PlayerShootingController,
-          GameplayAssembely
-        m_MethodName: OnStartedAiming
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &881980310855467957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6696826417178908024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 124d487a78054d82bf2565c40f1a4144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: 4ccf0448bb8f8bd469e87c8c766179bb, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3219451295420590550}
-        m_TargetAssemblyTypeName: PoolGame.Gameplay.Shooting.PlayerShootingController,
-          GameplayAssembely
-        m_MethodName: OnStoppedAiming
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  calculationDataObserver: {fileID: 0}
+  aimingDataObserver: {fileID: 0}
