@@ -44,6 +44,7 @@ namespace PoolGame.Gameplay.Shooting
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
             }
             _currentCalculationData.Shootable = null;
+            calculationDataObserver.Value = _currentCalculationData;
         }
 
         private void Update()

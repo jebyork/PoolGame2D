@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e7bef2f651444d1a39a2b980c0648c8, type: 3}
   m_Name: Shot Has Power
   m_EditorClassIdentifier: 
-  aimingCalculationDataObserver: {fileID: 11400000, guid: b25af9e614fb228488c26e770110c169, type: 2}
+  minPower: 0.207
   aimingDataObserver: {fileID: 11400000, guid: a2a6ffe9c6b521d42b7b6c6672438f90, type: 2}
-  minPower: 0.28

@@ -7,10 +7,11 @@ namespace PoolGame.Gameplay.Shooting.CanShoot
     public class HasPowerToShoot : CanShootStrategy
     {
         [SerializeField, Range(0f, 1f)] private float minPower;
-        
-        protected override bool CanShootImplementation(AimingCalculationData calculationData, AimingData aimingData)
+        [SerializeField] private AimingDataObserver aimingDataObserver;
+
+        public override bool CanShoot()
         {
-            return aimingData.Power01 >= minPower; 
+            return aimingDataObserver.Value.Power01 >= minPower; 
         }
     }
 }

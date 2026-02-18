@@ -10,7 +10,7 @@ namespace PoolGame.Gameplay.Shooting.CanShoot
         [SerializeField] private List<CanShootStrategy> canShootStrategyList;
 
 
-        protected override bool CanShootImplementation(AimingCalculationData calculationData, AimingData aimingData)
+        public override bool CanShoot()
         {
             foreach (CanShootStrategy strategy in canShootStrategyList)
             {

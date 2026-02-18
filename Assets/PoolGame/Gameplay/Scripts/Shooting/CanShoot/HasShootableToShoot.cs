@@ -6,9 +6,11 @@ namespace PoolGame.Gameplay.Shooting.CanShoot
     [CreateAssetMenu(fileName = "Has Shootable To Shoot", menuName = "Shooting/Can Shoot/HasShootable", order = 0)]
     public class HasShootableToShoot : CanShootStrategy
     {
-        protected override bool CanShootImplementation(AimingCalculationData calculationData, AimingData aimingData)
+        [SerializeField] private AimingCalculationDataObserver aimingCalculationDataObserver;
+
+        public override bool CanShoot()
         {
-            return calculationData.Shootable != null;
+            return aimingCalculationDataObserver.Value.Shootable != null;
         }
     }
 }

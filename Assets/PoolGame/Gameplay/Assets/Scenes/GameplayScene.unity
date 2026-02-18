@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 314287409}
   - component: {fileID: 314287411}
   - component: {fileID: 314287410}
+  - component: {fileID: 314287412}
   m_Layer: 7
   m_Name: Right
   m_TagString: Untagged
@@ -454,6 +455,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &314287412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314287408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fbe0f7c9f7450b9464486ec03ee02b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &348810100
 GameObject:
   m_ObjectHideFlags: 0
@@ -465,6 +478,7 @@ GameObject:
   - component: {fileID: 348810101}
   - component: {fileID: 348810103}
   - component: {fileID: 348810102}
+  - component: {fileID: 348810104}
   m_Layer: 7
   m_Name: Bottom
   m_TagString: Untagged
@@ -588,6 +602,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &348810104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348810100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fbe0f7c9f7450b9464486ec03ee02b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &452175337
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 732507640}
   - component: {fileID: 732507641}
+  - component: {fileID: 732507642}
   m_Layer: 0
   m_Name: LineDrawer
   m_TagString: Untagged
@@ -988,8 +1015,88 @@ MonoBehaviour:
   firstGuide: {fileID: 1443587689}
   secondGuide: {fileID: 2122619816}
   circleGuide: {fileID: 2083842502}
+  endOffset: 0.3
+--- !u!114 &732507642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732507639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76eb6687c277471681f75c27285650db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cueBallPrefab: {fileID: 3766746412011436920, guid: e045be8d6650ac145a560887253edbd7, type: 3}
+  bounceLayer:
+    serializedVersion: 2
+    m_Bits: 192
+  firstGuideMaxDistance: 10
+  secondaryGuideMaxDistance: 2
   aimingCalculationDataObserver: {fileID: 11400000, guid: b25af9e614fb228488c26e770110c169, type: 2}
   aimingDataObserver: {fileID: 11400000, guid: a2a6ffe9c6b521d42b7b6c6672438f90, type: 2}
+  canShootStrategy: {fileID: 11400000, guid: 96ac75e253cee474ea1be16b8db15843, type: 2}
+  OnFirstGuideCalculated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 732507641}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Guides.GuideDrawer, GameplayAssembely
+        m_MethodName: DrawFirstGuide
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnSecondaryGuideCircleCalculated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 732507641}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Guides.GuideDrawer, GameplayAssembely
+        m_MethodName: DrawSecondaryGuides
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDisableGuides:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 732507641}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Guides.GuideDrawer, GameplayAssembely
+        m_MethodName: HideAllGuide
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDisableSecondaryGuides:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 732507641}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Guides.GuideDrawer, GameplayAssembely
+        m_MethodName: HideSecondaryGuides
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &765852477 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6696826417178908024, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
@@ -1276,6 +1383,7 @@ GameObject:
   - component: {fileID: 1660063266}
   - component: {fileID: 1660063268}
   - component: {fileID: 1660063267}
+  - component: {fileID: 1660063269}
   m_Layer: 7
   m_Name: Left
   m_TagString: Untagged
@@ -1399,6 +1507,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1660063269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660063265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fbe0f7c9f7450b9464486ec03ee02b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1711716449
 GameObject:
   m_ObjectHideFlags: 0
@@ -1539,6 +1659,7 @@ GameObject:
   - component: {fileID: 2045785181}
   - component: {fileID: 2045785183}
   - component: {fileID: 2045785184}
+  - component: {fileID: 2045785185}
   m_Layer: 7
   m_Name: Top
   m_TagString: Untagged
@@ -1662,6 +1783,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2045785185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045785180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fbe0f7c9f7450b9464486ec03ee02b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2083842501 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 479437424683133890, guid: 739c3fa088b09914e9411f681a5c9ca5, type: 3}
