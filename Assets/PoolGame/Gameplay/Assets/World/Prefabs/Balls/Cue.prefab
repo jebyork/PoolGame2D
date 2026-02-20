@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2649243515292164298}
   - component: {fileID: 4717756750965139196}
   - component: {fileID: 7583279142685191342}
+  - component: {fileID: -1174878923652468170}
   m_Layer: 3
   m_Name: Cue
   m_TagString: Player
@@ -165,7 +166,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1f04bd756d4f0e964217f04081433c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stopSpeed: 0.1
-  shotRequestedChannel: {fileID: 11400000, guid: a7d4d83d466743342be6bc74ddfd1022, type: 2}
   cueBallValueStore: {fileID: 11400000, guid: 7af2d9083f2a870468b64da215c46765, type: 2}
   maxImpulse: 20
+--- !u!114 &-1174878923652468170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3766746412011436920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf87fcc68a0a42fcbbbcd694734ccbf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stopSpeed: 0.1

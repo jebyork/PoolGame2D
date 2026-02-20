@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ccdcc685c3e4d00bda416bd18192d21, type: 3}
+  m_Name: Cue Ball Scene Data
+  m_EditorClassIdentifier: 
+  MaxNumberOfBalls: 1
+  InitialNumberOfBalls: 1
+  BallPrefab: {fileID: 3766746412011436920, guid: e045be8d6650ac145a560887253edbd7, type: 3}

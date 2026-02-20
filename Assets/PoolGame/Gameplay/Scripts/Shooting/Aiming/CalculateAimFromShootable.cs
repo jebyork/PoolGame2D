@@ -7,7 +7,7 @@ namespace PoolGame.Gameplay.Shooting.Aiming
     {
         protected override Vector3 CalculateDirection(AimingCalculationData aimingCalculationData)
         {
-            return aimingCalculationData.InitialMousePos - aimingCalculationData.CurrentMousePos;
+            return aimingCalculationData.Shootable.GetPosition() - aimingCalculationData.CurrentMousePos;
         }
     }
 }

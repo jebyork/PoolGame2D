@@ -1,197 +1,116 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using PoolGame.Core.Events.Channels;
 using PoolGame.Core.Helpers;
-using PoolGame.Gameplay.Ball;
+using PoolGame.Core.Setup;
+using PoolGame.Gameplay.Ball.Racking;
 using UnityEngine;
 
-namespace PoolGame.Core.Game.States.Gameplay.Ball
+namespace PoolGame.Gameplay.Ball
 {
-    public class BallManager : MonoBehaviour
+    public class BallManager : MonoBehaviour, ISetupControl
     {
-        [SerializeField] private BoolEventChannel ballsStoppedMovingEventChannel;
+        [SerializeField] private BallSceneData objectBallSceneData;
+        [SerializeField] private BallSceneData cueBallSceneData;
+        [SerializeField] private CalculateRackPositionsBase objectBallRacking;
         
         [Space]
-        [SerializeField] private GameObject ballPrefab;
-        [SerializeField] private GameObject cueBallPrefab;
+        [SerializeField] private Transform objectBallPosition;
+        [SerializeField] private Transform cueBallPosition;
         
-        [Space]
-        [SerializeField] private Transform ballSpawnTransform;
-        [SerializeField] private Transform cueBallSpawnTransform;
-
-        [Space] 
-        [SerializeField] private int initialBallCount;
-        [SerializeField] private float rackGap = 0.001f;
-        [SerializeField, Range(0f, 360f)] private float rackAngleDeg = 0f;
+        private int _currentNumberOfObjects;
+        private readonly List<BallController> _ballControllers =  new List<BallController>();
         
-        private readonly List<BallController> _balls = new();
-        private BallController _cueBall;
-        private bool _ballsMoving;
-        
-        private void FixedUpdate()
+        public void Initialize()
         {
-            if (!_cueBall) 
+
+        }
+        
+        public void CreateObjects()
+        {
+            CreateInitialBalls(objectBallSceneData);
+            CreateInitialBalls(cueBallSceneData);
+        }
+        
+        private void CreateInitialBalls(BallSceneData ballData)
+        {
+            if (ballData == null)
+            {
+                Debug.LogError($"[Ball Manager] Ball Scene Data is missing on {ballData.name}");
                 return;
-
-            bool anyMoving = AreAnyBallsMoving();
-
-            UpdateMovingStateAndNotify(anyMoving);
-        }
-
-        public void CreateBalls()
-        {
-            if (ballPrefab != null)
-            {
-                for (int i = 0; i < initialBallCount; i++)
-                {
-                    BallController ball = Instantiate(ballPrefab, transform).GetComponent<BallController>();
-                    if (ball != null)
-                        _balls.Add(ball);
-                }
-            }
-
-            if (cueBallPrefab != null)
-            {
-                _cueBall = Instantiate(cueBallPrefab, transform).GetComponent<BallController>();
-            }
-        }
-
-        public void SetInitialBallPosition()
-        {
-            PlaceInitialNonCueBalls();
-            SetBallPosition(_cueBall.gameObject , cueBallSpawnTransform.position);
-        }
-
-        public void SetAllBallActiveness(bool isActive)
-        {
-            foreach (GameObject ball in _balls.Select(b => b.gameObject))
-            {
-                ball.SetActive(isActive);
             }
             
-            GameObject cueBallGObj = _cueBall.gameObject;
-            cueBallGObj.SetActive(isActive);
-        }
-        
-        private void PlaceInitialNonCueBalls()
-        {
-            if (_balls == null || _balls.Count == 0) 
-                return;
-
-            GameObject firstBall = _balls[0].gameObject;
-            float radius = GetBallRadius(firstBall);
-            if (radius < 0f) 
-                return;
-
-            int i = 0;
-            foreach (var pos in GetRackPositions(_balls.Count, radius))
-                _balls[i++].transform.position = pos;
-        }
-
-        private void SetBallPosition(GameObject ball , Vector2 position)
-        {
-            ball.transform.position = position;
-        }
-
-        private float GetBallRadius(GameObject ball)
-        {
-            CircleCollider2D col = ball.GetComponent<CircleCollider2D>();
-            if (col == null)
+            if (objectBallSceneData.BallPrefab == null)
             {
-                Debug.LogError("Ball prefab is missing CircleCollider2D");
-                return -1;
+                Debug.LogError($"[Ball Manager] Ball Prefab is missing on {ballData.name}");
+                return;
             }
-            return col.radius * ball.transform.lossyScale.x;
-        }
-        
-        private IEnumerable<Vector2> GetRackPositions(int totalBalls, float radius)
-        {
-            float diameter = (2f * radius) + rackGap;
-            float rowStep = (Mathf.Sqrt(3f) * 0.5f) * diameter;
-
-            Vector2 apex = ballSpawnTransform.position;
-
-            float rad = rackAngleDeg * Mathf.Deg2Rad;
-            Vector2 forward = new Vector2(Mathf.Sin(rad), Mathf.Cos(rad)).normalized;
-            Vector2 right = new (forward.y, -forward.x);
-
-            int ballIndex = 0;
-            int rowIndex = 0;
-
-            while (ballIndex < totalBalls)
+            
+            for (int i = 0; i < ballData.InitialNumberOfBalls; i++)
             {
-                int ballsThisRow = rowIndex + 1;
-
-                Vector2 rowOrigin = apex + forward * (rowIndex * rowStep);
-                float leftOffset = -0.5f * (ballsThisRow - 1) * diameter;
-
-                for (int slotIndex = 0; slotIndex < ballsThisRow; slotIndex++)
-                {
-                    if (ballIndex >= totalBalls) yield break;
-
-                    float sideOffset = leftOffset + slotIndex * diameter;
-                    Vector2 pos = rowOrigin + right * sideOffset;
-
-                    yield return pos;
-                    ballIndex++;
-                }
-
-                rowIndex++;
-            }
-        }
-        
-        private void OnDrawGizmosSelected()
-        {
-            if (ballSpawnTransform == null || ballPrefab == null) 
-                return;
-            CircleCollider2D col = ballPrefab.GetComponent<CircleCollider2D>();
-            if (col == null) 
-                return;
-            float radius = col.radius * ballPrefab.transform.lossyScale.x;
-            foreach (Vector2 pos in GetRackPositions(initialBallCount , radius))
-            {
-                MyHelpers.DrawCircle(pos, radius, 12, Color.cyan);
+                SpawnBall(ballData.BallPrefab);
             }
         }
 
-        private bool AreAnyBallsMoving()
+        public void Prepare()
         {
-            return AreAnyObjectBallsMoving() || IsCueBallMoving();
-        }
-
-        private bool IsCueBallMoving()
-        {
-            return _cueBall != null && _cueBall.IsMoving;
-        }
-
-        private bool AreAnyObjectBallsMoving()
-        {
-            return _balls.Any(b => b != null && b.IsMoving);
-        }
-        
-        private void UpdateMovingStateAndNotify(bool anyMoving)
-        {
-            if (ShouldFireStoppedEvent(anyMoving))
+            PrepareBalls(objectBallSceneData, objectBallRacking, GetObjectBalls(), objectBallPosition);
+            
+            BallController cueBall = GetCueBall();
+            if (cueBall == null)
             {
-                _ballsMoving = false;
-                ballsStoppedMovingEventChannel?.RaiseEvent(true);
+                Debug.LogError("[Ball Manager] Cue ball not found (missing Player tag?)");
                 return;
             }
+            PrepareBall(cueBall, cueBallPosition);
+        }
+        
+        public void StartGame()
+        {
+            
+        }
 
-            if (ShouldMarkAsMoving(anyMoving))
+        private void SpawnBall(GameObject ball)
+        {
+            GameObject ballObject = Instantiate(ball, transform);
+            BallController ballController = ballObject.GetComponent<BallController>();
+            if (ballController == null)
             {
-                _ballsMoving = true;
+                Debug.LogError($"[Ball Manager] Ball Controller is missing on {ball.name}");
+                return;
+            }
+            _ballControllers.Add(ballController);
+        }
+
+        private void PrepareBalls(BallSceneData data, CalculateRackPositionsBase rackPositions, BallController[] balls, Transform parent)
+        {
+            CircleCollider2D col = data.BallPrefab.GetComponent<CircleCollider2D>();
+            float radius = col.GetWorldCircleRadius();
+            Vector2[] positions = rackPositions.Calculate(balls.Length, radius);
+            int count = Mathf.Min(balls.Length, positions.Length);
+            for (int i = 0; i < count; i++)
+            {
+                balls[i].transform.position = (Vector3)positions[i] + parent.position;
             }
         }
         
-        private bool ShouldFireStoppedEvent(bool anyMoving)
+        private void PrepareBall(BallController ball, Transform parent)
         {
-            return _ballsMoving && !anyMoving;
+            ball.transform.position = parent.position;
+        }
+        
+        public BallController[] GetObjectBalls() => _ballControllers.
+            Where(b => !b.CompareTag("Player")).
+            ToArray();
+
+        public BallController GetCueBall()
+        {
+            BallController cue = _ballControllers.FirstOrDefault(b => b.CompareTag("Player"));
+            if (cue == null)
+            {
+                Debug.LogError("[Ball Manager] No cue ball found with tag Player.");
+            }
+            return cue;
         }
 
-        private bool ShouldMarkAsMoving(bool anyMoving)
-        {
-            return !_ballsMoving && anyMoving;
-        }
     }
 }
