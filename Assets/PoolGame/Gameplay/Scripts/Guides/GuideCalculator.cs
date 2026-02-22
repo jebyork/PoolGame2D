@@ -25,7 +25,6 @@ namespace PoolGame.Gameplay.Guides
         public UnityEvent OnDisableGuides;
         public UnityEvent OnDisableSecondaryGuides;
 
-        private bool _shouldGuide;
         private float _checkRadius;
 
         private void Start()
@@ -42,11 +41,9 @@ namespace PoolGame.Gameplay.Guides
         {
             if (ShouldDrawGuide())
             {
-                _shouldGuide = true;
                 CalculateFirstGuide();
                 return;
             }
-            _shouldGuide = false;
             OnDisableGuides?.Invoke();
         }
         
@@ -104,20 +101,6 @@ namespace PoolGame.Gameplay.Guides
             GuideLineVisualData result = responder.Resolve(hit, incomingDir, _checkRadius, secondaryGuideMaxDistance);
             GuideCircleVisualData circleData = new (hit.centroid, _checkRadius);
             OnSecondaryGuideCircleCalculated?.Invoke(circleData, result);
-        }
-
-        private GuideLineVisualData CalculateSecondLine(RaycastHit2D hit)
-        {
-            CircleCollider2D ballCol = hit.collider as CircleCollider2D;
-            if (ballCol == null) return new GuideLineVisualData(Vector3.zero, Vector3.zero);
-            
-            float ballRadius = ballCol.GetWorldCircleRadius();
-            Vector3 centre = ballCol.transform.position;
-            Vector3 dir = (-hit.normal).normalized;
-            Vector3 start = centre + dir * ballRadius;
-            Vector2 end = start + dir * secondaryGuideMaxDistance;
-            
-            return new GuideLineVisualData(start, end);
         }
     }
     

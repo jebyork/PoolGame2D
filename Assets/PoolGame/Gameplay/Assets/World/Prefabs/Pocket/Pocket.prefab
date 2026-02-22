@@ -101,6 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04407d277d4657f49b4f029c0cbefc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ballLayers:
+    serializedVersion: 2
+    m_Bits: 72
+  ballPocketedEvent: {fileID: 11400000, guid: bf19d2433d449364381a113faf04af75, type: 2}
 --- !u!58 &6765387195809082279
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -131,7 +135,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

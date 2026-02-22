@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c781c5ba162416d816c462aa5dc5e8b, type: 3}
-  m_Name: Value Cue Ball
+  m_Script: {fileID: 11500000, guid: 155a5c36d7754a41bab43f7cb37ab2b6, type: 3}
+  m_Name: Ball Pocketed Event
   m_EditorClassIdentifier: 
-  value: {fileID: 0}
