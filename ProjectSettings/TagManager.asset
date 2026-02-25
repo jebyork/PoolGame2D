@@ -41,5 +41,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Scene
+    uniqueID: 1197823047
+    locked: 0
+  - name: Pockets
+    uniqueID: 2819584747
+    locked: 0
+  - name: Ball
+    uniqueID: 3418093025
+    locked: 0
+  - name: Guide
+    uniqueID: 1035359857
+    locked: 0
   m_RenderingLayers:
   - Default

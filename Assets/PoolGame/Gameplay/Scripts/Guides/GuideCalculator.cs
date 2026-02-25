@@ -4,6 +4,7 @@ using PoolGame.Gameplay.Shooting.Aiming;
 using PoolGame.Gameplay.Shooting.CanShoot;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.Guides
 {
@@ -20,10 +21,10 @@ namespace PoolGame.Gameplay.Guides
         [SerializeField] private AimingDataObserver aimingDataObserver;
         [SerializeField] private CanShootStrategy canShootStrategy;
         
-        public UnityEvent<GuideLineVisualData> OnFirstGuideCalculated;
-        public UnityEvent<GuideCircleVisualData, GuideLineVisualData> OnSecondaryGuideCircleCalculated;
-        public UnityEvent OnDisableGuides;
-        public UnityEvent OnDisableSecondaryGuides;
+        public UnityEvent<GuideLineVisualData> onFirstGuideCalculated;
+        public UnityEvent<GuideCircleVisualData, GuideLineVisualData> onSecondaryGuideCircleCalculated;
+        public UnityEvent onDisableGuides;
+        public UnityEvent onDisableSecondaryGuides;
 
         private float _checkRadius;
 
@@ -44,7 +45,7 @@ namespace PoolGame.Gameplay.Guides
                 CalculateFirstGuide();
                 return;
             }
-            OnDisableGuides?.Invoke();
+            onDisableGuides?.Invoke();
         }
         
         private bool ShouldDrawGuide()
@@ -79,10 +80,10 @@ namespace PoolGame.Gameplay.Guides
             else
             {
                 guideEnd = guideStart + dir * distance;
-                OnDisableSecondaryGuides?.Invoke();
+                onDisableSecondaryGuides?.Invoke();
             }
 
-            OnFirstGuideCalculated?.Invoke(new GuideLineVisualData
+            onFirstGuideCalculated?.Invoke(new GuideLineVisualData
             {
                 Start = guideStart,
                 End = guideEnd
@@ -94,13 +95,13 @@ namespace PoolGame.Gameplay.Guides
             IGuideHitResponse responder = hit.collider.GetComponent<IGuideHitResponse>();
             if (responder == null)
             {
-                OnDisableSecondaryGuides?.Invoke();
+                onDisableSecondaryGuides?.Invoke();
                 return;
             }
 
             GuideLineVisualData result = responder.Resolve(hit, incomingDir, _checkRadius, secondaryGuideMaxDistance);
             GuideCircleVisualData circleData = new (hit.centroid, _checkRadius);
-            OnSecondaryGuideCircleCalculated?.Invoke(circleData, result);
+            onSecondaryGuideCircleCalculated?.Invoke(circleData, result);
         }
     }
     
@@ -119,7 +120,7 @@ namespace PoolGame.Gameplay.Guides
     public struct GuideCircleVisualData
     {
         public Vector3 Pos;
-        public float Radius;
+        public readonly float Radius;
 
         public GuideCircleVisualData(Vector3 pos , float radius)
         {

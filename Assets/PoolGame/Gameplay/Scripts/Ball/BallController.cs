@@ -28,6 +28,7 @@ namespace PoolGame.Gameplay.Ball
             CheckIsMoving();
             StopVelocityAtLowSpeed();
         }
+        
         private void StopVelocityAtLowSpeed()
         {
             if (_rigidbody == null) 
