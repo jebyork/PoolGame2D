@@ -83,7 +83,12 @@ namespace PoolGame.Gameplay.Ball
         public void Prepare()
         {
             PrepareBalls(objectBallRacking, GetObjectBalls(), objectBallPosition);
-            
+
+            ResetCueBall();
+        }
+        
+        public void ResetCueBall()
+        {
             BallController cueBall = GetCueBall();
             if (cueBall == null)
             {
@@ -92,7 +97,7 @@ namespace PoolGame.Gameplay.Ball
             }
             PrepareBall(cueBall, cueBallPosition);
         }
-        
+
         public void StartGame()
         {
             
@@ -177,7 +182,6 @@ namespace PoolGame.Gameplay.Ball
         
         private bool AdjustSpawnByRadius(float radius, Vector3 origin, out Vector3 position)
         {
-            // if caller passes origin as the desired start, keep it consistent
             position = origin;
 
             if (BallCanPlaceHere(radius, origin))

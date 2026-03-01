@@ -1,4 +1,3 @@
-
 using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
 using UnityEngine;
@@ -9,14 +8,16 @@ namespace PoolGame.Gameplay.Table.Pockets
     {
         [SerializeField] private LayerMask ballLayers;
         [SerializeField] private BallPocketedChannel ballPocketedEvent;
-
-        private void OnTriggerEnter(Collider other)
+        
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (!ballLayers.ContainsLayer(other.gameObject.layer)) return;
-            BallPocketedEvent pocketedEvt = new BallPocketedEvent();
-            pocketedEvt.PottedBall = other.GetComponent<BallController>();
-            pocketedEvt.Pocket = this;
-                
+            Debug.Log("Ball Pocketed");
+            BallPocketedEvent pocketedEvt = new BallPocketedEvent
+            {
+                PottedBall = other.GetComponent<BallController>() ,
+                Pocket = this
+            };
             ballPocketedEvent?.RaiseEvent(pocketedEvt);
         }
     }
