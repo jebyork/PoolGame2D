@@ -25,7 +25,7 @@ namespace PoolGame.Gameplay.Ball
             if (ballManager == null) 
                 return;
 
-            bool anyMovingNow = ballManager.BallControllers
+            bool anyMovingNow = ballManager.AllBalls
                 .Any(b => b.IsMoving);
 
 

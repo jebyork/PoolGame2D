@@ -27,7 +27,6 @@ namespace PoolGame.Gameplay.GameMode
             else
             {
                 _score--;
-                BallManager.Instance.ResetCueBall();
                 Logwin.Log("Score", _score);
             }
         }
