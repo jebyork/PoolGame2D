@@ -34,9 +34,14 @@ namespace PoolGame.Gameplay.Table.Pockets
             if (overlapPercentage < ballOverlapMinPercentage)
                 return;
             
+            BroadcastPocketedEvent(other);
+        }
+
+        private void BroadcastPocketedEvent(Collider2D ball)
+        {
             BallPocketedEvent pocketedEvt = new BallPocketedEvent
             {
-                PottedBall = other.GetComponent<BallController>() ,
+                PottedBall = ball.GetComponent<BallController>() ,
                 Pocket = this
             };
             ballPocketedEvent?.RaiseEvent(pocketedEvt);

@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
     public class BallController : MonoBehaviour
     {
+        public static event Action<BallController> OnBallSpawned;
+        public static event Action<BallController> OnBallDespawned;
+        
         [SerializeField] private float stopSpeed = .5f;
         
         private Rigidbody2D _rigidbody;
@@ -21,6 +25,8 @@ namespace PoolGame.Gameplay.Ball
             {
                 Debug.LogError("[Ball Controller] No RigidBody on ball." , this);
             }
+            
+            RaiseBallSpawned(this);
         }
 
         private void Update()
@@ -35,12 +41,10 @@ namespace PoolGame.Gameplay.Ball
                 return;
             
             float speed = _rigidbody.linearVelocity.magnitude;
-            if (speed < stopSpeed)
-            {
-                _rigidbody.linearVelocity = Vector2.zero;
-                _rigidbody.angularVelocity = 0;
-                IsMoving = false;
-            }
+            if (!(speed < stopSpeed)) return;
+            _rigidbody.linearVelocity = Vector2.zero;
+            _rigidbody.angularVelocity = 0;
+            IsMoving = false;
         }
 
         private void CheckIsMoving()
@@ -51,6 +55,21 @@ namespace PoolGame.Gameplay.Ball
             float speed = _rigidbody.linearVelocity.magnitude;
             if (speed > stopSpeed)
                 IsMoving = true;
+        }
+
+        private void OnDestroy()
+        {
+            RaiseBallDespawned(this);
+        }
+
+        private void RaiseBallSpawned(BallController obj)
+        {
+            OnBallSpawned?.Invoke(obj);
+        }
+
+        private void RaiseBallDespawned(BallController obj)
+        {
+            OnBallDespawned?.Invoke(obj);
         }
     }
 }

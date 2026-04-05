@@ -1,24 +1,18 @@
 ﻿using PoolGame.Core.Helpers;
-using PoolGame.Core.Values;
 using PoolGame.Gameplay.Shooting;
 using PoolGame.Gameplay.Shooting.Aiming;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
-    public class CueBall : MonoBehaviour, IShootable
+    public class CueBall : BallController, IShootable
     {
-        [SerializeField] private GameObjectValue cueBallValueStore;
         [SerializeField] private float maxImpulse = 10f;
         
         private Rigidbody2D _rb2D;
         
         private void Awake()
         {
-            if (cueBallValueStore)
-            {
-                cueBallValueStore.Value = gameObject;
-            }
             _rb2D = GetComponent<Rigidbody2D>();
         }
 
@@ -39,6 +33,5 @@ namespace PoolGame.Gameplay.Ball
             float impulse = power01 * maxImpulse;
             _rb2D.AddForce(direction * impulse, ForceMode2D.Impulse);
         }
-
     }
 }
