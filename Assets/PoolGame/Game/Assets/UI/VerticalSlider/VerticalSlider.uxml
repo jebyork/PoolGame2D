@@ -1,0 +1,4 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/PowerSlider/Resources/StyleSheet-VerticalSlider.uss?fileID=7433441132597879392&amp;guid=8f18083737a94864ab04e537bca2c9d4&amp;type=3#StyleSheet-VerticalSlider" />
+    <PoolGame.Game.UI.VerticalSlider name="VerticalSlider" style="align-self: auto; align-content: auto; align-items: auto; justify-content: center; flex-grow: 1; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;" />
+</ui:UXML>

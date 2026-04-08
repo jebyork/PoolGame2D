@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using PoolGame.Core.Helpers;
+﻿using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
 using PoolGame.Gameplay.Shooting.Aiming;
 using PoolGame.Gameplay.Shooting.CanShoot;

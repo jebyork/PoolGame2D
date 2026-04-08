@@ -1,32 +1,32 @@
-﻿using System;
+using System;
 using UnityEngine;
+
+[Serializable]
+public enum BallType
+{
+    CueBall,
+    ObjectBall
+}
 
 namespace PoolGame.Gameplay.Ball
 {
     public class BallController : MonoBehaviour
     {
-        public static event Action<BallController> OnBallSpawned;
-        public static event Action<BallController> OnBallDespawned;
-        
         [SerializeField] private float stopSpeed = .5f;
-        
+        [SerializeField] private BallType ballType = BallType.ObjectBall;
+        public BallType BallType => ballType;
+
         private Rigidbody2D _rigidbody;
 
-        public bool IsMoving
-        {
-            get;
-            private set;
-        }
+        public bool IsMoving { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             if (_rigidbody == null)
             {
-                Debug.LogError("[Ball Controller] No RigidBody on ball." , this);
+                Debug.LogError("[Ball Controller] No RigidBody on ball.", this);
             }
-            
-            RaiseBallSpawned(this);
         }
 
         private void Update()
@@ -34,42 +34,62 @@ namespace PoolGame.Gameplay.Ball
             CheckIsMoving();
             StopVelocityAtLowSpeed();
         }
-        
+
+        public void Activate(Vector3 position, Transform parent)
+        {
+            transform.SetParent(parent);
+            transform.SetPositionAndRotation(position, Quaternion.identity);
+            ResetState();
+
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+        }
+
+        public void Deactivate()
+        {
+            ResetState();
+
+            if (gameObject.activeSelf)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
         private void StopVelocityAtLowSpeed()
         {
-            if (_rigidbody == null) 
+            if (_rigidbody == null)
                 return;
-            
+
             float speed = _rigidbody.linearVelocity.magnitude;
             if (!(speed < stopSpeed)) return;
+
             _rigidbody.linearVelocity = Vector2.zero;
-            _rigidbody.angularVelocity = 0;
+            _rigidbody.angularVelocity = 0f;
             IsMoving = false;
         }
 
         private void CheckIsMoving()
         {
-            if (_rigidbody == null || IsMoving) 
+            if (_rigidbody == null || IsMoving)
                 return;
-            
+
             float speed = _rigidbody.linearVelocity.magnitude;
             if (speed > stopSpeed)
+            {
                 IsMoving = true;
+            }
         }
 
-        private void OnDestroy()
+        private void ResetState()
         {
-            RaiseBallDespawned(this);
-        }
+            if (_rigidbody == null)
+                return;
 
-        private void RaiseBallSpawned(BallController obj)
-        {
-            OnBallSpawned?.Invoke(obj);
-        }
-
-        private void RaiseBallDespawned(BallController obj)
-        {
-            OnBallDespawned?.Invoke(obj);
+            _rigidbody.linearVelocity = Vector2.zero;
+            _rigidbody.angularVelocity = 0f;
+            IsMoving = false;
         }
     }
 }

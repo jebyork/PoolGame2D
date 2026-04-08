@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ccdcc685c3e4d00bda416bd18192d21, type: 3}
-  m_Name: Object Ball Scene Data
+  m_Script: {fileID: 11500000, guid: 6aebfa9c22ce4ef29b1e1d0c81ed091a, type: 3}
+  m_Name: PwerSliderValue
   m_EditorClassIdentifier: 
-  MaxNumberOfBalls: 6
-  InitialNumberOfBalls: 6
-  BallPrefab: {fileID: 8477776877701192545, guid: fa42751c23794e049a692dba7c829289, type: 3}
+  value: 0
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []

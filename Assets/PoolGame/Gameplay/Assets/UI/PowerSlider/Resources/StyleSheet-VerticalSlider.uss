@@ -1,0 +1,41 @@
+.Vertical_Slider {
+    background-color: rgba(137, 52, 52, 0);
+    align-content: auto;
+    justify-content: center;
+    flex-grow: 0;
+    align-self: stretch;
+    width: 50px;
+    height: 500px;
+    align-items: stretch;
+}
+
+.Vertical_Slider_Background {
+    background-color: rgb(214, 214, 214);
+    align-items: stretch;
+    flex-grow: 1;
+    width: auto;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    justify-content: flex-end;
+}
+
+.Vertical_Slider_Slider {
+    background-color: rgb(255, 97, 97);
+    flex-grow: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    height: 89%;
+    min-height: 0%;
+    max-height: 100%;
+    align-items: auto;
+    justify-content: flex-start;
+    align-content: auto;
+}

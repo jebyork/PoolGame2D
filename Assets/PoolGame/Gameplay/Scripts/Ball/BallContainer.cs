@@ -1,99 +1,117 @@
-﻿using System;
 using System.Collections.Generic;
 using PoolGame.Core;
-using PoolGame.Core.Helpers;
-using PoolGame.Gameplay.Ball.Spawning;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.Ball
 {
     public class BallContainer : GenericSingleton<BallContainer>
     {
-        [SerializeField] private LayerMask cueBallLayerMask;
-        
         [Space]
-        [SerializeField] private List<BallController> balls;
-        public List<BallController> Balls { get; private set; }
+        [SerializeField] private List<BallController> pooledBalls = new();
+        [SerializeField] private List<BallController> activeBalls = new();
 
-        [Space]
-        [Header("Runtime")]
-        [SerializeField] private BallController cueBall;
-        [SerializeField] private List<BallController> objectBalls = new List<BallController>();
-        
-        
-        private void OnEnable()
-        {
-            BallController.OnBallSpawned += AddBallToList;
-            BallController.OnBallDespawned += RemoveBallFromList;
-        }
+        private readonly Dictionary<GameObject, Queue<BallController>> _poolsByPrefab = new();
+        private readonly Dictionary<BallController, GameObject> _prefabByBall = new();
 
-        private void OnDisable()
+        public BallController SpawnBall(GameObject prefab, Vector3 position, Transform parent)
         {
-            BallController.OnBallSpawned -= AddBallToList;
-            BallController.OnBallDespawned -= RemoveBallFromList;
-        }
-
-        private void AddBallToList(BallController obj)
-        {
-            if(balls.Contains(obj)) return;
-            balls.Add(obj);
-            SortAdd(obj);
-        }
-        
-        private void RemoveBallFromList(BallController obj)
-        {
-            if(!balls.Contains(obj)) return;
-            balls.Remove(obj);
-            SortRemove(obj);
-        }
-
-        private void SortAdd(BallController ball)
-        {
-            LayerMask layerMask = ball.gameObject.layer;
-            if (cueBallLayerMask.ContainsLayer(layerMask))
+            if (prefab == null)
             {
-                cueBall = ball;
+                Debug.LogError("[Ball Container] Can't spawn a null prefab.");
+                return null;
+            }
+
+            BallController ball = GetAvailableBall(prefab);
+            if (ball == null)
+                return null;
+
+            pooledBalls.Remove(ball);
+
+            if (!activeBalls.Contains(ball))
+            {
+                activeBalls.Add(ball);
+            }
+
+            ball.Activate(position, parent);
+            return ball;
+        }
+
+        public void ReleaseBall(BallController ball)
+        {
+            if (ball == null)
+                return;
+
+            if (!_prefabByBall.TryGetValue(ball, out GameObject prefab))
+            {
+                Debug.LogWarning($"[Ball Container] Cannot release untracked ball {ball.name}.", ball);
                 return;
             }
-            
-            objectBalls.Add(ball);
-        }
 
-        private void SortRemove(BallController ball)
-        {
-            LayerMask layerMask = ball.gameObject.layer;
-            if (cueBallLayerMask.ContainsLayer(layerMask))
+            activeBalls.Remove(ball);
+
+            if (!pooledBalls.Contains(ball))
             {
-                cueBall = null;
-                return;
+                pooledBalls.Add(ball);
             }
-            
-            objectBalls.Remove(ball);
+
+            Queue<BallController> pool = GetOrCreatePool(prefab);
+            if (!pool.Contains(ball))
+            {
+                pool.Enqueue(ball);
+            }
+
+            ball.Deactivate();
         }
 
-        public bool IsCueBall(BallController ball)
+        public BallController GetPooledBallOfType(BallType ballType)
         {
-            return cueBall == ball;
+            foreach (BallController ball in pooledBalls)
+            {
+                if (ball != null && ball.BallType == ballType)
+                {
+                    return ball;
+                }
+            }
+
+            return null;
+        }
+        
+        private BallController GetAvailableBall(GameObject prefab)
+        {
+            Queue<BallController> pool = GetOrCreatePool(prefab);
+
+            while (pool.Count > 0)
+            {
+                BallController pooledBall = pool.Dequeue();
+                if (pooledBall != null)
+                {
+                    return pooledBall;
+                }
+            }
+
+            GameObject ballObject = Instantiate(prefab);
+            BallController ball = ballObject.GetComponent<BallController>();
+            if (ball == null)
+            {
+                Debug.LogError($"[Ball Container] Ball Controller is missing on {ballObject.name}");
+                Destroy(ballObject);
+                return null;
+            }
+
+            _prefabByBall[ball] = prefab;
+            return ball;
         }
 
-        public bool IsCueBall(GameObject ball)
+        private Queue<BallController> GetOrCreatePool(GameObject prefab)
         {
-            BallController ballController = ball.GetComponent<BallController>();
-            if(ballController == null) return false;
-            return IsCueBall(ballController);
-        }
+            if (_poolsByPrefab.TryGetValue(prefab, out Queue<BallController> pool))
+            {
+                return pool;
+            }
 
-        public bool IsObjectBall(BallController ball)
-        {
-            return objectBalls.Contains(ball);
-        }
-
-        public bool IsObjectBall(GameObject ball)
-        {
-            BallController ballController = ball.GetComponent<BallController>();
-            if(ballController == null) return false;
-            return IsObjectBall(ballController);
+            pool = new Queue<BallController>();
+            _poolsByPrefab[prefab] = pool;
+            return pool;
         }
     }
 }

@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ccdcc685c3e4d00bda416bd18192d21, type: 3}
-  m_Name: Cue Ball Scene Data
+  m_Script: {fileID: 11500000, guid: ada3c15bad7a44b7ae25f8989af43fdf, type: 3}
+  m_Name: Calculate Aim From Slider
   m_EditorClassIdentifier: 
-  MaxNumberOfBalls: 1
-  InitialNumberOfBalls: 1
-  BallPrefab: {fileID: 3766746412011436920, guid: e045be8d6650ac145a560887253edbd7, type: 3}
+  powerSlider: {fileID: 11400000, guid: ad649b21e32515440a1fe3ca004673c9, type: 2}

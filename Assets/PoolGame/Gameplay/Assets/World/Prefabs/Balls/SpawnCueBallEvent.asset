@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3da81fdf06f440b8899c6383b46ca311, type: 3}
-  m_Name: Triangle Rack
+  m_Script: {fileID: 11500000, guid: 113edfcc04ce47b791c0cfc3e5af6729, type: 3}
+  m_Name: SpawnCueBallEvent
   m_EditorClassIdentifier: 
-  RackGap: 0.0001
-  RackAngleDeg: 90

@@ -37,6 +37,7 @@ namespace PoolGame.Gameplay.Table.Pockets
             BroadcastPocketedEvent(other);
         }
 
+        
         private void BroadcastPocketedEvent(Collider2D ball)
         {
             BallPocketedEvent pocketedEvt = new BallPocketedEvent

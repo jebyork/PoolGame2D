@@ -1,6 +1,6 @@
-﻿using PoolGame.Core;
-using PoolGame.Core.Helpers;
-using PoolGame.Core.Observers;
+﻿using System;
+using PoolGame.Core;
+using PoolGame.Core.Events;
 using PoolGame.Gameplay.Ball;
 using PoolGame.Gameplay.Table.Pockets;
 using UnityEngine;
@@ -9,23 +9,48 @@ namespace PoolGame.Gameplay.GameMode
 {
     public class PotAllGameMode : GenericSingleton<PotAllGameMode>
     {
-        [SerializeField] private LayerMask objectBallLayer;
-        [SerializeField] private LayerMask cueBallLayer;
+        [SerializeField] private VoidEventChannel spawnObjectBallEvent;
+        [SerializeField] private VoidEventChannel spawnCueBallEvent;
 
-        [Space] 
-        [SerializeField] private ObservableBool playerCanGoBool;
+        [SerializeField] private BallPocketedChannel ballPocketedEvent;
 
         private int _score = 0;
-        
-        public void BallPocketed(BallPocketedEvent evt)
+
+        private void OnEnable()
         {
-            if (objectBallLayer.ContainsLayer(evt.PottedBall.gameObject.layer))
+            ballPocketedEvent.Subscribe(BallPocketed);
+        }
+
+        private void OnDisable()
+        {
+            ballPocketedEvent.Unsubscribe(BallPocketed);
+        }
+
+        private void Start()
+        {
+            spawnObjectBallEvent.RaiseEvent();
+            spawnCueBallEvent.RaiseEvent();
+        }
+
+        private void BallPocketed(BallPocketedEvent evt)
+        {
+            if (evt.PottedBall == null)
+                return;
+
+            Debug.Log("Ball Pocketed");
+
+            if (evt.PottedBall.BallType == BallType.ObjectBall)
             {
                 _score++;
+                BallContainer.Instance.ReleaseBall(evt.PottedBall);
                 Logwin.Log("Score", _score);
+                return;
             }
-            else
+
+            if (evt.PottedBall.BallType == BallType.CueBall)
             {
+                BallContainer.Instance.ReleaseBall(evt.PottedBall);
+                spawnCueBallEvent.RaiseEvent();
                 _score--;
                 Logwin.Log("Score", _score);
             }

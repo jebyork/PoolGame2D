@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stopSpeed: 0.1
+  ballType: 1
 --- !u!114 &-8810914221846043614
 MonoBehaviour:
   m_ObjectHideFlags: 0
