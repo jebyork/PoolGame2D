@@ -1,59 +1,100 @@
-﻿using System;
-using PoolGame.Core;
 using PoolGame.Core.Events;
 using PoolGame.Gameplay.Ball;
 using PoolGame.Gameplay.Table.Pockets;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.GameMode
 {
-    public class PotAllGameMode : GenericSingleton<PotAllGameMode>
+    public class PotAllGameMode : MonoBehaviour
     {
-        [SerializeField] private VoidEventChannel spawnObjectBallEvent;
-        [SerializeField] private VoidEventChannel spawnCueBallEvent;
-
+        [FormerlySerializedAs("spawnObjectBallEvent")]
+        [SerializeField] private VoidEventChannel spawnObjectBallsCommand;
+        [FormerlySerializedAs("spawnCueBallEvent")]
+        [SerializeField] private VoidEventChannel spawnCueBallCommand;
         [SerializeField] private BallPocketedChannel ballPocketedEvent;
+        [SerializeField] private VoidEventChannel shotTakenEvent;
+        [SerializeField] private VoidEventChannel ballsStoppedEvent;
+        
+        [SerializeField] private BallContainer ballContainer;
 
-        private int _score = 0;
-
+        private int _score;
+        private bool _cueBallPottedThisShot;
+        private bool _ballsInPlay;
+        
         private void OnEnable()
         {
-            ballPocketedEvent.Subscribe(BallPocketed);
+            ballPocketedEvent?.Subscribe(BallPocketed);
+            ballsStoppedEvent?.Subscribe(BallsStoppedMoving);
+            shotTakenEvent?.Subscribe(ShotTaken);
         }
 
         private void OnDisable()
         {
-            ballPocketedEvent.Unsubscribe(BallPocketed);
+            ballPocketedEvent?.Unsubscribe(BallPocketed);
+            ballsStoppedEvent?.Unsubscribe(BallsStoppedMoving);
+            shotTakenEvent?.Unsubscribe(ShotTaken);
         }
-
+        
         private void Start()
         {
-            spawnObjectBallEvent.RaiseEvent();
-            spawnCueBallEvent.RaiseEvent();
+            _cueBallPottedThisShot = false;
+            spawnObjectBallsCommand.RaiseEvent();
+            spawnCueBallCommand.RaiseEvent();
+        }
+
+        private void Update()
+        {
+            Logwin.Log("Cue Potted:", _cueBallPottedThisShot, "gameMode");
         }
 
         private void BallPocketed(BallPocketedEvent evt)
         {
+            if (!_ballsInPlay)
+                return;
+            
             if (evt.PottedBall == null)
                 return;
 
-            Debug.Log("Ball Pocketed");
-
-            if (evt.PottedBall.BallType == BallType.ObjectBall)
+            switch (evt.PottedBall.BallType)
             {
-                _score++;
-                BallContainer.Instance.ReleaseBall(evt.PottedBall);
-                Logwin.Log("Score", _score);
-                return;
+                case BallType.ObjectBall:
+                    _score++;
+                    ballContainer.ReleaseBall(evt.PottedBall);
+                    Logwin.Log("Score", _score);
+                    break;
+
+                case BallType.CueBall:
+                    _cueBallPottedThisShot = true;
+                    ballContainer.ReleaseBall(evt.PottedBall);
+                    break;
             }
+        }
 
-            if (evt.PottedBall.BallType == BallType.CueBall)
+        public bool CanTakePlayerShot() => !_ballsInPlay;
+
+        
+        private void BallsStoppedMoving()
+        {
+            if (_cueBallPottedThisShot)
             {
-                BallContainer.Instance.ReleaseBall(evt.PottedBall);
-                spawnCueBallEvent.RaiseEvent();
                 _score--;
+                spawnCueBallCommand.RaiseEvent();
                 Logwin.Log("Score", _score);
             }
+
+            if (ballContainer.GetActiveBallCount(BallType.ObjectBall) == 0)
+            {
+                spawnObjectBallsCommand.RaiseEvent();
+            }
+            
+            _ballsInPlay = false;
+            _cueBallPottedThisShot = false;
+        }
+        
+        private void ShotTaken()
+        {
+            _ballsInPlay = true;
         }
     }
 }

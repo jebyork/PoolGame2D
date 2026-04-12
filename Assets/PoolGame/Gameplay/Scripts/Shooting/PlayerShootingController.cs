@@ -1,7 +1,9 @@
-﻿using PoolGame.Core.Helpers;
+using System;
+using PoolGame.Core.Events;
+using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
+using PoolGame.Gameplay.GameMode;
 using PoolGame.Gameplay.Shooting.Aiming;
-using PoolGame.Gameplay.Shooting.CanShoot;
 using PoolGame.Gameplay.Shooting.Targeting;
 using UnityEngine;
 
@@ -11,19 +13,33 @@ namespace PoolGame.Gameplay.Shooting
     {
         [SerializeField] private GetShootableTargetStrategy getShootableTargetStrategy;
         [SerializeField] private ObservableVector2 mouseScreenPosition;
-        [SerializeField] private CalculateAimDataStrategy  calculateAimDataStrategy;
-        [SerializeField] private CanShootStrategy canShootStrategy;
-
-        [Space] 
-        [SerializeField] private AimingCalculationDataObserver calculationDataObserver;
-        [SerializeField] private AimingDataObserver aimingDataObserver;
-            
+        [SerializeField] private CalculateAimDataStrategy calculateAimDataStrategy;
+        
+        
+        [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
+        [SerializeField] private PotAllGameMode potAllGameMode;
+        
+        [SerializeField] private VoidEventChannel shotTakenEvent;
         
         private AimingCalculationData _currentCalculationData;
         private AimingData _currentAimingData;
         
+
+        public AimingCalculationData CurrentCalculationData => _currentCalculationData;
+        public AimingData CurrentAimingData => _currentAimingData;
+        public bool HasActiveAim => _currentCalculationData.Shootable != null;
+
+        private void Awake()
+        {
+            potAllGameMode = FindFirstObjectByType<PotAllGameMode>();
+        }
+
         public void OnStartedAiming()
         {
+            Debug.Log("Started Aiming");
+            if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())
+                return;
+
             Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             IShootable shootable = getShootableTargetStrategy.GetShootable();
             _currentCalculationData = new AimingCalculationData
@@ -32,27 +48,37 @@ namespace PoolGame.Gameplay.Shooting
                 InitialMousePos = worldPoint,
                 CurrentMousePos = worldPoint,
             };
-            calculationDataObserver.Value = _currentCalculationData;
-            
         }
 
         public void OnStoppedAiming()
         {
-            if (canShootStrategy.CanShoot())
+            if (CanShootCurrentAim())
             {
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
+                shotTakenEvent?.RaiseEvent();
             }
+
             _currentCalculationData.Shootable = null;
-            calculationDataObserver.Value = _currentCalculationData;
         }
 
         private void Update()
         {
-            if(_currentCalculationData.Shootable == null) return;
-            
+            if (_currentCalculationData.Shootable == null)
+                return;
+
             _currentCalculationData.CurrentMousePos = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             _currentAimingData = calculateAimDataStrategy.CalculateAimData(_currentCalculationData);
-            aimingDataObserver.Value = _currentAimingData;
+        }
+
+        public bool CanShootCurrentAim()
+        {
+            if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())
+                return false;
+
+            if (_currentCalculationData.Shootable == null)
+                return false;
+
+            return _currentAimingData.Power01 >= minShotPower;
         }
     }
 }

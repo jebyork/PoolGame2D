@@ -1,28 +1,32 @@
 using PoolGame.Core.Events;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.Ball.Spawning
 {
     public abstract class BallSpawner : MonoBehaviour
     {
-        [SerializeField] protected VoidEventChannel onSpawnBalls;
+        [FormerlySerializedAs("onSpawnBalls")]
+        [SerializeField] protected VoidEventChannel spawnCommandChannel;
         [SerializeField] protected GameObject ballPrefab;
+        
+        [SerializeField] protected BallContainer ballContainer;
 
         private void OnEnable()
         {
-            onSpawnBalls.Subscribe(Spawn);
+            spawnCommandChannel.Subscribe(Spawn);
         }
 
         private void OnDisable()
         {
-            onSpawnBalls.Unsubscribe(Spawn);
+            spawnCommandChannel.Unsubscribe(Spawn);
         }
 
-        protected abstract void Spawn();
+        public abstract void Spawn();
 
         protected BallController SpawnBall(Vector3 position)
         {
-            return BallContainer.Instance.SpawnBall(ballPrefab, position, transform);
+            return ballContainer.SpawnBall(ballPrefab, position, transform);
         }
     }
 }

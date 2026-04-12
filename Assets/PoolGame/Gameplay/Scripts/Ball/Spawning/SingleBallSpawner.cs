@@ -2,7 +2,7 @@
 {
     public class SingleBallSpawner : BallSpawner
     {
-        protected override void Spawn()
+        public override void Spawn()
         {
             SpawnBall(transform.position);
         }

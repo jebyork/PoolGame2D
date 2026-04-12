@@ -9,13 +9,6 @@ namespace PoolGame.Gameplay.Ball
     {
         [SerializeField] private float maxImpulse = 10f;
         
-        private Rigidbody2D _rb2D;
-        
-        private void Awake()
-        {
-            _rb2D = GetComponent<Rigidbody2D>();
-        }
-
         public Vector3 GetPosition()
         {
             return transform.position;
@@ -28,10 +21,10 @@ namespace PoolGame.Gameplay.Ball
         
         private void ApplyShot(Vector3 direction , float power01)
         {
-            if (_rb2D == null || direction.IsNearlyZero()) return;
+            if (Rb2D == null || direction.IsNearlyZero()) return;
 
             float impulse = power01 * maxImpulse;
-            _rb2D.AddForce(direction * impulse, ForceMode2D.Impulse);
+            Rb2D.AddForce(direction * impulse, ForceMode2D.Impulse);
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System;
 using PoolGame.Core.Helpers;
+using PoolGame.Gameplay.Shooting;
 using PoolGame.Gameplay.Shooting.Aiming;
-using PoolGame.Gameplay.Shooting.CanShoot;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.Guides
 {
@@ -12,15 +10,12 @@ namespace PoolGame.Gameplay.Guides
     {
         [SerializeField] private GameObject cueBallPrefab;
         [SerializeField] private LayerMask bounceLayer;
-
         [SerializeField] private float firstGuideMaxDistance;
         [SerializeField] private float secondaryGuideMaxDistance;
-        
+
         [Space, Header("External Data")]
-        [SerializeField] private AimingCalculationDataObserver aimingCalculationDataObserver;
-        [SerializeField] private AimingDataObserver aimingDataObserver;
-        [SerializeField] private CanShootStrategy canShootStrategy;
-        
+        [SerializeField] private PlayerShootingController shootingController;
+
         public UnityEvent<GuideLineVisualData> onFirstGuideCalculated;
         public UnityEvent<GuideCircleVisualData, GuideLineVisualData> onSecondaryGuideCircleCalculated;
         public UnityEvent onDisableGuides;
@@ -34,7 +29,6 @@ namespace PoolGame.Gameplay.Guides
             {
                 CircleCollider2D circleCollider2D = cueBallPrefab.GetComponent<CircleCollider2D>();
                 _checkRadius = circleCollider2D.GetWorldCircleRadius();
-                Debug.Log(_checkRadius);
             }
         }
 
@@ -45,28 +39,36 @@ namespace PoolGame.Gameplay.Guides
                 CalculateFirstGuide();
                 return;
             }
+
             onDisableGuides?.Invoke();
         }
-        
+
         private bool ShouldDrawGuide()
         {
-            if (aimingCalculationDataObserver == null) return false;
-            if (aimingCalculationDataObserver.Value.Shootable == null) return false;
-            return canShootStrategy.CanShoot();
+            if (shootingController == null)
+                return false;
+
+            if (!shootingController.HasActiveAim)
+                return false;
+
+            return shootingController.CanShootCurrentAim();
         }
-        
+
         private void CalculateFirstGuide()
         {
-            Vector3 ballCentre = aimingCalculationDataObserver.Value.Shootable.GetPosition();
-            Vector3 dir = aimingDataObserver.Value.Direction.normalized;
+            AimingCalculationData calculationData = shootingController.CurrentCalculationData;
+            AimingData aimingData = shootingController.CurrentAimingData;
+
+            Vector3 ballCentre = calculationData.Shootable.GetPosition();
+            Vector3 dir = aimingData.Direction.normalized;
             Vector3 guideStart = ballCentre + dir * _checkRadius;
-            float distance = firstGuideMaxDistance * aimingDataObserver.Value.Power01;
-            
+            float distance = firstGuideMaxDistance * aimingData.Power01;
+
             RaycastHit2D hit = Physics2D.CircleCast(
-                guideStart, 
-                _checkRadius, 
-                dir, 
-                distance, 
+                guideStart,
+                _checkRadius,
+                dir,
+                distance,
                 bounceLayer
             );
 
@@ -90,7 +92,7 @@ namespace PoolGame.Gameplay.Guides
             });
         }
 
-        private void CalculateSecondaryGuides(RaycastHit2D hit,  Vector3 incomingDir)
+        private void CalculateSecondaryGuides(RaycastHit2D hit, Vector3 incomingDir)
         {
             IGuideHitResponse responder = hit.collider.GetComponent<IGuideHitResponse>();
             if (responder == null)
@@ -100,34 +102,32 @@ namespace PoolGame.Gameplay.Guides
             }
 
             GuideLineVisualData result = responder.Resolve(hit, incomingDir, _checkRadius, secondaryGuideMaxDistance);
-            GuideCircleVisualData circleData = new (hit.centroid, _checkRadius);
+            GuideCircleVisualData circleData = new(hit.centroid, _checkRadius);
             onSecondaryGuideCircleCalculated?.Invoke(circleData, result);
         }
     }
-    
+
     public struct GuideLineVisualData
     {
         public Vector3 Start;
         public Vector3 End;
-        
+
         public GuideLineVisualData(Vector3 start, Vector3 end)
         {
             Start = start;
             End = end;
         }
     }
-    
+
     public struct GuideCircleVisualData
     {
         public Vector3 Pos;
         public readonly float Radius;
 
-        public GuideCircleVisualData(Vector3 pos , float radius)
+        public GuideCircleVisualData(Vector3 pos, float radius)
         {
             Pos = pos;
             Radius = radius;
         }
     }
 }
-
-

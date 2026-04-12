@@ -12,29 +12,20 @@ namespace PoolGame.Gameplay.Ball
 {
     public class BallController : MonoBehaviour
     {
-        [SerializeField] private float stopSpeed = .5f;
         [SerializeField] private BallType ballType = BallType.ObjectBall;
         public BallType BallType => ballType;
 
-        private Rigidbody2D _rigidbody;
-
-        public bool IsMoving { get; private set; }
-
+        protected Rigidbody2D Rb2D;
+        
         private void Awake()
         {
-            _rigidbody = GetComponent<Rigidbody2D>();
-            if (_rigidbody == null)
+            Rb2D = GetComponent<Rigidbody2D>();
+            if (Rb2D == null)
             {
                 Debug.LogError("[Ball Controller] No RigidBody on ball.", this);
             }
         }
-
-        private void Update()
-        {
-            CheckIsMoving();
-            StopVelocityAtLowSpeed();
-        }
-
+        
         public void Activate(Vector3 position, Transform parent)
         {
             transform.SetParent(parent);
@@ -57,39 +48,23 @@ namespace PoolGame.Gameplay.Ball
             }
         }
 
-        private void StopVelocityAtLowSpeed()
+        public void ForceStop()
         {
-            if (_rigidbody == null)
+            if (Rb2D == null)
                 return;
-
-            float speed = _rigidbody.linearVelocity.magnitude;
-            if (!(speed < stopSpeed)) return;
-
-            _rigidbody.linearVelocity = Vector2.zero;
-            _rigidbody.angularVelocity = 0f;
-            IsMoving = false;
+            
+            Rb2D.linearVelocity = Vector2.zero;
+            Rb2D.angularVelocity = 0f;
         }
-
-        private void CheckIsMoving()
-        {
-            if (_rigidbody == null || IsMoving)
-                return;
-
-            float speed = _rigidbody.linearVelocity.magnitude;
-            if (speed > stopSpeed)
-            {
-                IsMoving = true;
-            }
-        }
-
+        
         private void ResetState()
         {
-            if (_rigidbody == null)
-                return;
-
-            _rigidbody.linearVelocity = Vector2.zero;
-            _rigidbody.angularVelocity = 0f;
-            IsMoving = false;
+            ForceStop();
         }
+
+        public bool IsMovingAboveSpeed(float speedThreshold)
+        {
+            return Rb2D != null && Rb2D.linearVelocity.magnitude > speedThreshold;
+        } 
     }
 }

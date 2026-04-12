@@ -25,7 +25,7 @@ namespace PoolGame.Gameplay.Ball.Spawning
             }
         }
         
-        protected override void Spawn()
+        public override void Spawn()
         {
             ProcessPositions((pos, radius) => 
                 SpawnBall(new Vector3(pos.x, pos.y, 0f)));

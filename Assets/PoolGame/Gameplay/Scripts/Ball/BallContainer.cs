@@ -4,11 +4,13 @@ using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
-    public class BallContainer : GenericSingleton<BallContainer>
+    public class BallContainer : MonoBehaviour
     {
         [Space]
         [SerializeField] private List<BallController> pooledBalls = new();
         [SerializeField] private List<BallController> activeBalls = new();
+
+        public IReadOnlyList<BallController> ActiveBalls => activeBalls;
 
         private readonly Dictionary<GameObject, Queue<BallController>> _poolsByPrefab = new();
         private readonly Dictionary<BallController, GameObject> _prefabByBall = new();
@@ -75,7 +77,22 @@ namespace PoolGame.Gameplay.Ball
 
             return null;
         }
-        
+
+        public int GetActiveBallCount(BallType ballType)
+        {
+            int count = 0;
+
+            foreach (BallController ball in activeBalls)
+            {
+                if (ball != null && ball.BallType == ballType)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
         private BallController GetAvailableBall(GameObject prefab)
         {
             Queue<BallController> pool = GetOrCreatePool(prefab);
