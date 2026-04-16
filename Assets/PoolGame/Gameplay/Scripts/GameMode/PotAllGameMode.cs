@@ -1,26 +1,32 @@
 using PoolGame.Core.Events;
+using PoolGame.Gameplay.Attributes;
 using PoolGame.Gameplay.Ball;
 using PoolGame.Gameplay.Table.Pockets;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace PoolGame.Gameplay.GameMode
 {
     public class PotAllGameMode : MonoBehaviour
     {
-        [FormerlySerializedAs("spawnObjectBallEvent")]
+        [Header("Events")]
         [SerializeField] private VoidEventChannel spawnObjectBallsCommand;
-        [FormerlySerializedAs("spawnCueBallEvent")]
         [SerializeField] private VoidEventChannel spawnCueBallCommand;
-        [SerializeField] private BallPocketedChannel ballPocketedEvent;
         [SerializeField] private VoidEventChannel shotTakenEvent;
         [SerializeField] private VoidEventChannel ballsStoppedEvent;
+        [SerializeField] private BallPocketedChannel ballPocketedEvent;
+        [SerializeField] private VoidEventChannel gameOverCommand;
         
+        [Header("Components")]
         [SerializeField] private BallContainer ballContainer;
 
-        private int _score;
+        [Header("Attributes")]
+        [SerializeField] private Life life;
+        [SerializeField] private Score score;
+        
+        
         private bool _cueBallPottedThisShot;
         private bool _ballsInPlay;
+        private bool _gameOver = false;
         
         private void OnEnable()
         {
@@ -42,12 +48,7 @@ namespace PoolGame.Gameplay.GameMode
             spawnObjectBallsCommand.RaiseEvent();
             spawnCueBallCommand.RaiseEvent();
         }
-
-        private void Update()
-        {
-            Logwin.Log("Cue Potted:", _cueBallPottedThisShot, "gameMode");
-        }
-
+        
         private void BallPocketed(BallPocketedEvent evt)
         {
             if (!_ballsInPlay)
@@ -56,31 +57,22 @@ namespace PoolGame.Gameplay.GameMode
             if (evt.PottedBall == null)
                 return;
 
-            switch (evt.PottedBall.BallType)
+            if (evt.PottedBall.BallType == BallType.CueBall)
             {
-                case BallType.ObjectBall:
-                    _score++;
-                    ballContainer.ReleaseBall(evt.PottedBall);
-                    Logwin.Log("Score", _score);
-                    break;
-
-                case BallType.CueBall:
-                    _cueBallPottedThisShot = true;
-                    ballContainer.ReleaseBall(evt.PottedBall);
-                    break;
+                _cueBallPottedThisShot = true;
             }
+            
+            ballContainer.ReleaseBall(evt.PottedBall);
         }
 
-        public bool CanTakePlayerShot() => !_ballsInPlay;
+        public bool CanTakePlayerShot() => !_ballsInPlay && !_gameOver;
 
         
         private void BallsStoppedMoving()
         {
             if (_cueBallPottedThisShot)
             {
-                _score--;
                 spawnCueBallCommand.RaiseEvent();
-                Logwin.Log("Score", _score);
             }
 
             if (ballContainer.GetActiveBallCount(BallType.ObjectBall) == 0)
@@ -95,6 +87,13 @@ namespace PoolGame.Gameplay.GameMode
         private void ShotTaken()
         {
             _ballsInPlay = true;
+        }
+
+        public void OnNoLifeLeft()
+        {
+            Debug.Log("No life left");
+            _gameOver = true;
+            gameOverCommand?.RaiseEvent();
         }
     }
 }

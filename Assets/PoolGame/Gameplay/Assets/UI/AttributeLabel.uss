@@ -1,0 +1,6 @@
+.unity-label {
+    font-size: 40px;
+    -unity-text-outline-color: rgb(236, 236, 236);
+    color: rgb(156, 71, 71);
+    -unity-font-style: bold;
+}

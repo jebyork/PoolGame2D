@@ -1,9 +1,16 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="AttributeBlock" src="project://database/Assets/PoolGame/Gameplay/Assets/UI/AttributeBlock.uxml?fileID=9197481963319205126&amp;guid=aec5a4c093e93e34794ae797a2d2441d&amp;type=3#AttributeBlock" />
     <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/PowerSlider/Resources/StyleSheet-VerticalSlider.uss?fileID=7433441132597879392&amp;guid=8f18083737a94864ab04e537bca2c9d4&amp;type=3#StyleSheet-VerticalSlider" />
+    <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/AttributeLabel.uss?fileID=7433441132597879392&amp;guid=d406f45b720265c49a47c19d76a18343&amp;type=3#AttributeLabel" />
     <ui:VisualElement style="flex-grow: 1; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px; flex-direction: row; align-self: stretch;">
-        <ui:VisualElement name="Left" style="flex-grow: 1; align-content: auto; align-self: auto; align-items: flex-start; justify-content: center;">
-            <PoolGame.Game.UI.VerticalSlider select-amount="1.03" power-gradient="Blend:{0,#520000FF};{1,#FF0000FF}+{0,1};{1,1}" />
+        <ui:VisualElement name="Left" style="flex-grow: 1; align-content: flex-start; align-self: auto; align-items: stretch; justify-content: flex-start; flex-direction: row;">
+            <ui:VisualElement style="flex-grow: 0; justify-content: space-around; width: 10%;" />
+            <ui:VisualElement style="flex-grow: 0; align-items: auto; align-self: auto; align-content: auto;">
+                <ui:Instance template="AttributeBlock" name="AttributeBlock" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; align-items: auto; align-self: auto; align-content: auto;">
+                <ui:Instance template="AttributeBlock" name="AttributeBlock" />
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="Right" style="flex-grow: 1;" />
     </ui:VisualElement>
 </ui:UXML>

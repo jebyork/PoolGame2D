@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/AttributeLabel.uss?fileID=7433441132597879392&amp;guid=d406f45b720265c49a47c19d76a18343&amp;type=3#AttributeLabel" />
+    <ui:VisualElement name="AttributeBlock" style="flex-grow: 0; align-self: flex-start; align-items: auto; align-content: auto; flex-direction: row; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
+        <ui:Label text="Title" name="LabelTitle" />
+        <ui:Label text=":" name="Colon" />
+        <ui:Label text="Value" name="LabelTitle" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -13,25 +13,22 @@ namespace PoolGame.Gameplay.Ball
         [Header("Events")]
         [SerializeField] private VoidEventChannel shotTakenEvent;
         [SerializeField] private VoidEventChannel ballsStoppedMovingEvent;
+        [SerializeField] private VoidEventChannel gameOverEvent;
 
         private bool _ballsInPlay;
         
         private void OnEnable()
         {
-            if (shotTakenEvent != null)
-            {
-                shotTakenEvent.Subscribe(OnShotTaken);
-            }
+            shotTakenEvent?.Subscribe(OnShotTaken);
+            gameOverEvent?.Subscribe(OnGameOver);
         }
 
         private void OnDisable()
         {
-            if (shotTakenEvent != null)
-            {
-                shotTakenEvent.Unsubscribe(OnShotTaken);
-            }
+            shotTakenEvent?.Unsubscribe(OnShotTaken);
+            gameOverEvent.Unsubscribe(OnGameOver);
         }
-
+        
         private void FixedUpdate()
         {
             if (!_ballsInPlay)
@@ -74,6 +71,11 @@ namespace PoolGame.Gameplay.Ball
             {
                 ball?.ForceStop();
             }
+        }
+        
+        private void OnGameOver()
+        {
+            ForceStopAllBalls();
         }
     }
 }
