@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/Score/Resources/ScoreBox_StyleSheet.uss?fileID=7433441132597879392&amp;guid=32e67ebd5f27c7341bbd352389c5473b&amp;type=3#ScoreBox_StyleSheet" />
+    <ui:VisualElement name="ScoreBox" class="ScoreBox">
+        <ui:Label text="5" name="ScoreLabel" class="score-box-text" />
+    </ui:VisualElement>
+</ui:UXML>

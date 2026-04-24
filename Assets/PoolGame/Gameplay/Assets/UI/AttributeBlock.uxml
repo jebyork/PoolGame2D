@@ -3,6 +3,6 @@
     <ui:VisualElement name="AttributeBlock" style="flex-grow: 0; align-self: flex-start; align-items: auto; align-content: auto; flex-direction: row; padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px;">
         <ui:Label text="Title" name="LabelTitle" />
         <ui:Label text=":" name="Colon" />
-        <ui:Label text="Value" name="LabelTitle" />
+        <ui:Label text="Value" name="LabelValue" />
     </ui:VisualElement>
 </ui:UXML>

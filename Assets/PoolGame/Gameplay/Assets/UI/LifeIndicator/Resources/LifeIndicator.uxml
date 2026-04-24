@@ -1,0 +1,4 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/PoolGame/Gameplay/Assets/UI/LifeIndicator/Resources/LifeIndicator_StyleSheet.uss?fileID=7433441132597879392&amp;guid=fcf080da1a4ce284f9c38a705127e069&amp;type=3#LifeIndicator_StyleSheet" />
+    <ui:VisualElement name="LifeIndicator" class="NoLife" style="justify-content: flex-start; flex-grow: 0; align-items: flex-start; align-self: auto; flex-wrap: nowrap; -unity-background-scale-mode: scale-to-fit; width: 80px; height: 80px;" />
+</ui:UXML>

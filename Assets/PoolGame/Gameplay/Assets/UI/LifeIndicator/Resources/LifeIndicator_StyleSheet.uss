@@ -1,0 +1,14 @@
+#LifeIndicator {
+    width: 80px;
+    height: 80px;
+    margin-right: 10px;
+}
+
+.Life {
+    background-image: url("project://database/Assets/PoolGame/Gameplay/Assets/Art/Balls/Cue_Ball.png?fileID=2800000&guid=fa0230082684be244a89ce29cca09e08&type=3#Cue_Ball");
+}
+
+.NoLife {
+    background-image: url("project://database/Assets/PoolGame/Gameplay/Assets/Art/Balls/Cue_Ball_No_Life.png?fileID=2800000&guid=92791fcb4a18def438b56ab976355411&type=3#Cue_Ball_No_Life");
+    -unity-background-image-tint-color: rgb(82, 82, 82);
+}

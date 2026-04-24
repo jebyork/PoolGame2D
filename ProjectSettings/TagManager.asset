@@ -44,8 +44,8 @@ TagManager:
   - name: Scene
     uniqueID: 1197823047
     locked: 0
-  - name: Pockets
-    uniqueID: 2819584747
+  - name: Table
+    uniqueID: 584881135
     locked: 0
   - name: Ball
     uniqueID: 3418093025

@@ -1,60 +1,27 @@
-﻿using PoolGame.Gameplay.Table.Pockets;
+﻿using System;
+using PoolGame.Gameplay.Table.Pockets;
 using UnityEngine;
+using Attribute = PoolGame.Game.Attribute.Attribute;
 
 namespace PoolGame.Gameplay.Attributes
 {
-    public class Score : MonoBehaviour, IAttribute
+    public class Score : Attribute
     {
-        [Header("Events")]
-        [SerializeField] private BallPocketedChannel ballPocketedEvent;
-        
-        [Header("Score")]
-        [SerializeField] private int scoreIncreaseBase = 1;
-        [SerializeField] private int scoreDecreaseBase = 3;
-        
         private static readonly int NoScore = 0;
-        private int _currentScore = NoScore;
-        
-        private void OnEnable()
+
+        private void Update()
         {
-            ballPocketedEvent?.Subscribe(BallPocketed);
-        }
-        
-        private void OnDisable()
-        {
-            ballPocketedEvent?.Unsubscribe(BallPocketed);
-        }
-        
-        public void DecreaseAttribute(int amount)
-        {
-            _currentScore = Mathf.Min(_currentScore - amount, NoScore);
+            Logwin.Log("Score", AttributeValue, "Score");
         }
 
-        public void IncreaseAttribute(int amount)
+        public override void DecreaseAttribute(int amount)
         {
-            _currentScore += amount;
+            AttributeValue = Mathf.Max(AttributeValue - amount, NoScore);
         }
 
-        public int GetAttributeValue()
+        public override void IncreaseAttribute(int amount)
         {
-            return _currentScore;
-        }
-
-        private void BallPocketed(BallPocketedEvent evt)
-        {
-            if (evt.PottedBall == null)
-                return;
-            
-            switch (evt.PottedBall.BallType)
-            {
-                case BallType.ObjectBall:
-                    IncreaseAttribute(scoreIncreaseBase);
-                    break;
-
-                case BallType.CueBall:
-                    DecreaseAttribute(scoreIncreaseBase);
-                    break;
-            }
+            AttributeValue += amount;
         }
     }
 }

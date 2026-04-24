@@ -1,65 +1,69 @@
-using PoolGame.Gameplay.Table.Pockets;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Attribute = PoolGame.Game.Attribute.Attribute;
 
 namespace PoolGame.Gameplay.Attributes
 {
-    public class Life : MonoBehaviour, IAttribute
+    public class Life : Attribute
     {
+        private const int NoLife = 0;
+
         [SerializeField] private int startingLife = 3;
-        [SerializeField] private int maxLife;
-        [SerializeField] private int lifeDecreaseBase = 1;
-        
-        [Header("Events")]
-        [SerializeField] private BallPocketedChannel ballPocketedEvent;
+        [SerializeField] private int currentMaxLife;
+        [SerializeField] private int maximumEverLife = 10;
+        [SerializeField] private UnityEvent onNoLife;
 
-        private static readonly int NoLife = 0;
-        private int _currentLife;
-        
-        public UnityEvent onNoLife;
+        public int MaxLife => currentMaxLife;
 
-        private void OnEnable()
-        {
-            ballPocketedEvent?.Subscribe(BallPocketed);
-        }
-        
-        private void OnDisable()
-        {
-            ballPocketedEvent?.Unsubscribe(BallPocketed);
-        }
-        
-        private void Start()
-        {
-            _currentLife = startingLife;
-        }
-        
-        private void BallPocketed(BallPocketedEvent evt)
-        {
-            if (evt.PottedBall == null)
-                return;
+        public event Action<int> OnMaxLifeChanged;
 
-            if (evt.PottedBall.BallType != BallType.CueBall) 
-                return;
-            DecreaseAttribute(lifeDecreaseBase);
-        }
-        
-        public void DecreaseAttribute(int amount)
+        private void Update()
         {
-            _currentLife = Mathf.Clamp(_currentLife - amount, NoLife, maxLife);
-            if (_currentLife <= NoLife)
+            Logwin.Log("Life", AttributeValue, "Life");
+        }
+
+        private void Awake()
+        {
+            currentMaxLife = Mathf.Clamp(
+                currentMaxLife > NoLife ? currentMaxLife : startingLife,
+                NoLife,
+                maximumEverLife);
+
+            SetLife(startingLife);
+        }
+
+        public override void DecreaseAttribute(int amount)
+        {
+            SetLife(AttributeValue - amount);
+        }
+
+        public override void IncreaseAttribute(int amount)
+        {
+            SetLife(AttributeValue + amount);
+        }
+
+        public void AdjustMaxLife(int amount, bool adjustLife = false)
+        {
+            currentMaxLife = Mathf.Clamp(currentMaxLife + amount, NoLife, maximumEverLife);
+            int lifeCheck = Mathf.Clamp(AttributeValue, NoLife, currentMaxLife);
+            if (lifeCheck != AttributeValue)
             {
-                onNoLife?.Invoke();
+                SetLife(lifeCheck);
             }
-        }
+            OnMaxLifeChanged?.Invoke(currentMaxLife);
 
-        public void IncreaseAttribute(int amount)
-        {
-            _currentLife = Mathf.Clamp(_currentLife + amount, NoLife, maxLife);
+            if (adjustLife)
+                SetLife(currentMaxLife);
         }
-
-        public int GetAttributeValue()
+        
+        private void SetLife(int value)
         {
-            return _currentLife;
+            AttributeValue = Mathf.Clamp(value, NoLife, currentMaxLife);
+            
+            if (AttributeValue == NoLife)
+                onNoLife?.Invoke();
         }
     }
 }
+

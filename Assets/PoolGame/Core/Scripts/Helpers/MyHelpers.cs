@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace PoolGame.Core.Helpers
 {
@@ -32,14 +35,20 @@ namespace PoolGame.Core.Helpers
             return Camera.main.ScreenToWorldPoint(screenPosition);
         }
         
-        public static Vector2 RandomPointInBox(BoxCollider2D box)
+        public static List<int> GetDigits(int value, int minimumSlots = 1)
         {
-            Bounds bounds = box.bounds;
+            string text = Math.Abs(value).ToString();
+            int totalSlots = Math.Max(minimumSlots, text.Length);
 
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float y = Random.Range(bounds.min.y, bounds.max.y);
+            text = text.PadLeft(totalSlots, '0');
 
-            return new Vector2(x, y);
+            List<int> digits = new(totalSlots);
+
+            for (int i = 0; i < text.Length; i++)
+                digits.Add(text[i] - '0');
+
+            return digits;
         }
+        
     }
 }

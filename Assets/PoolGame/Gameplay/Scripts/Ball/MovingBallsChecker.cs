@@ -1,5 +1,5 @@
 using System;
-using PoolGame.Core.Events;
+using PoolGame.Gameplay.GameMode;
 using PoolGame.Gameplay.Shooting;
 using UnityEngine;
 
@@ -7,28 +7,42 @@ namespace PoolGame.Gameplay.Ball
 {
     public class MovingBallsChecker : MonoBehaviour
     {
+        [Header("Components")] 
+        [SerializeField] private PlayerShootingController playerShootingController;
         [SerializeField] private BallContainer ballContainer;
+        [SerializeField] private GameState gameState;
+        
         [SerializeField] private float stopSpeedThreshold = 0.3f;
         
-        [Header("Events")]
-        [SerializeField] private VoidEventChannel shotTakenEvent;
-        [SerializeField] private VoidEventChannel ballsStoppedMovingEvent;
-        [SerializeField] private VoidEventChannel gameOverEvent;
-
+        
+        public Action OnBallsStoppedMoving;
+        
         private bool _ballsInPlay;
         
         private void OnEnable()
         {
-            shotTakenEvent?.Subscribe(OnShotTaken);
-            gameOverEvent?.Subscribe(OnGameOver);
+            if (playerShootingController)
+                playerShootingController.OnShotTaken += OnShotTaken;
+            if(gameState) 
+                gameState.onGameStateChanged += OnGameStateChanged;
         }
 
         private void OnDisable()
         {
-            shotTakenEvent?.Unsubscribe(OnShotTaken);
-            gameOverEvent.Unsubscribe(OnGameOver);
+            if (playerShootingController)
+                playerShootingController.OnShotTaken -= OnShotTaken;
+            if(gameState) 
+                gameState.onGameStateChanged -= OnGameStateChanged;
         }
-        
+
+        private void OnGameStateChanged(GameStateEnum state)
+        {
+            if (state != GameStateEnum.Finished)
+                return;
+            
+            ForceStopAllBalls();
+        }
+
         private void FixedUpdate()
         {
             if (!_ballsInPlay)
@@ -39,7 +53,7 @@ namespace PoolGame.Gameplay.Ball
 
             ForceStopAllBalls();
             _ballsInPlay = false;
-            ballsStoppedMovingEvent?.RaiseEvent();
+            OnBallsStoppedMoving?.Invoke();
         }
 
         private void OnShotTaken()
@@ -71,11 +85,6 @@ namespace PoolGame.Gameplay.Ball
             {
                 ball?.ForceStop();
             }
-        }
-        
-        private void OnGameOver()
-        {
-            ForceStopAllBalls();
         }
     }
 }

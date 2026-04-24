@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using PoolGame.Core;
 using UnityEngine;
 
@@ -36,6 +37,14 @@ namespace PoolGame.Gameplay.Ball
 
             ball.Activate(position, parent);
             return ball;
+        }
+
+        public void ReleaseAll()
+        {
+            foreach (BallController ball in ActiveBalls.Reverse())
+            {
+                ReleaseBall(ball);
+            }
         }
 
         public void ReleaseBall(BallController ball)

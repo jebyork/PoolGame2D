@@ -1,5 +1,4 @@
 using System;
-using PoolGame.Core.Events;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
 using PoolGame.Gameplay.GameMode;
@@ -19,7 +18,7 @@ namespace PoolGame.Gameplay.Shooting
         [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
         [SerializeField] private PotAllGameMode potAllGameMode;
         
-        [SerializeField] private VoidEventChannel shotTakenEvent;
+        public event Action OnShotTaken;
         
         private AimingCalculationData _currentCalculationData;
         private AimingData _currentAimingData;
@@ -36,7 +35,6 @@ namespace PoolGame.Gameplay.Shooting
 
         public void OnStartedAiming()
         {
-            Debug.Log("Started Aiming");
             if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())
                 return;
 
@@ -55,7 +53,7 @@ namespace PoolGame.Gameplay.Shooting
             if (CanShootCurrentAim())
             {
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
-                shotTakenEvent?.RaiseEvent();
+                OnShotTaken?.Invoke();
             }
 
             _currentCalculationData.Shootable = null;
