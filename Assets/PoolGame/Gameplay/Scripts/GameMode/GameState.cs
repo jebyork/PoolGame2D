@@ -68,38 +68,50 @@ namespace PoolGame.Gameplay.GameMode
 
         private void ShotTaken()
         {
-            if(CurrentGameState == GameStateEnum.Finished)
+            if (CurrentGameState == GameStateEnum.Finished)
                 return;
+
+            if (CurrentGameState == GameStateEnum.TurnInProgress)
+            {
+                CompleteTurn(GameStateEnum.TurnInProgress);
+                return;
+            }
 
             CurrentGameState = GameStateEnum.TurnInProgress;
         }
 
         private void BallsStopped()
         {
-            if(CurrentGameState == GameStateEnum.Finished)
+            if (CurrentGameState == GameStateEnum.Finished || CurrentGameState != GameStateEnum.TurnInProgress)
                 return;
 
-            _turn++;
-            CurrentGameState = GameStateEnum.TurnEvaluation;
-            BeginTurnEvaluation();
+            CompleteTurn(GameStateEnum.AwaitingTurn);
         }
 
-        private void BeginTurnEvaluation()
+        private void CompleteTurn(GameStateEnum nextState)
+        {
+            _turn++;
+            CurrentGameState = GameStateEnum.TurnEvaluation;
+            BeginTurnEvaluation(nextState);
+        }
+
+        private void BeginTurnEvaluation(GameStateEnum nextState)
         {
             if (_turnOutcomeHandlers.Count == 0)
             {
-                CurrentGameState = GameStateEnum.AwaitingTurn;
+                if (CurrentGameState != GameStateEnum.Finished)
+                    CurrentGameState = nextState;
                 return;
             }
 
             int remaining = _turnOutcomeHandlers.Count;
-            foreach (var handler in _turnOutcomeHandlers)
+            foreach (ITurnOutcomeHandler handler in _turnOutcomeHandlers)
             {
                 handler.OnTurnEvaluate(() =>
                 {
                     remaining--;
                     if (remaining == 0 && CurrentGameState != GameStateEnum.Finished)
-                        CurrentGameState = GameStateEnum.AwaitingTurn;
+                        CurrentGameState = nextState;
                 });
             }
         }

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d74e1ae921148e99f361c3b24a2a05b, type: 3}
+  m_Name: ScoreX3_Data
+  m_EditorClassIdentifier: 
+  Visual: {fileID: -4417820547146747828, guid: be37885c286935147af0d803fa4dd2cf, type: 3}
+  PickupEffect: {fileID: 11400000, guid: 4061ce785c610a64db0ec495cc0a1352, type: 2}
+  BroadcastMessage: Score X3
+  BallType: 1
+  SpawnRateWeight: 2

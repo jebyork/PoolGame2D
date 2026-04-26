@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace PoolGame.Gameplay.Table.Pockets
+namespace PoolGame.Gameplay.Pockets
 {
     [CreateAssetMenu(fileName = "Ball Potted Channel" , menuName = "Events/Balls/Potted Channel" , order = 0)]
     public class BallPocketedChannel : ScriptableObject

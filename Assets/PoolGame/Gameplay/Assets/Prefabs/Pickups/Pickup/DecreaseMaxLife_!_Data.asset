@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d74e1ae921148e99f361c3b24a2a05b, type: 3}
+  m_Name: DecreaseMaxLife_!_Data
+  m_EditorClassIdentifier: 
+  Visual: {fileID: -1671326338798223272, guid: 8f37b74d312884a458609c353893f6ce, type: 3}
+  PickupEffect: {fileID: 11400000, guid: 1932217120ecd5a4ba381a679ad8254b, type: 2}
+  BroadcastMessage: Decreased Max Life
+  BallType: 0
+  SpawnRateWeight: 0.25

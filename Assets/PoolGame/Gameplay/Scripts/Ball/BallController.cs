@@ -13,7 +13,7 @@ namespace PoolGame.Gameplay.Ball
     public class BallController : MonoBehaviour
     {
         [SerializeField] private BallType ballType = BallType.ObjectBall;
-        public BallType BallType => ballType;
+        public BallType GetBallType() => ballType;
 
         protected Rigidbody2D Rb2D;
         

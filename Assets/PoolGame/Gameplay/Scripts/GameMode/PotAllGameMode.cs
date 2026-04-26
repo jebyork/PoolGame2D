@@ -10,6 +10,7 @@ namespace PoolGame.Gameplay.GameMode
         [Header("Components")]
         [SerializeField] private BallContainer ballContainer;
         [SerializeField] private GameState gameState;
+        [SerializeField] private MovingBallsChecker movingBallsChecker;
 
         [Header("Spawning")]
         public UnityEvent spawnObjectBallsCommand;
@@ -47,7 +48,19 @@ namespace PoolGame.Gameplay.GameMode
                 spawnObjectBallsCommand?.Invoke();
         }
 
-        public bool CanTakePlayerShot() => gameState.CurrentGameState == GameStateEnum.AwaitingTurn;
+        public bool CanTakePlayerShot()
+        {
+            if (gameState == null || gameState.CurrentGameState == GameStateEnum.Finished)
+                return false;
+
+            if (gameState.CurrentGameState == GameStateEnum.AwaitingTurn)
+                return true;
+
+            if (gameState.CurrentGameState != GameStateEnum.TurnInProgress)
+                return false;
+
+            return movingBallsChecker != null && movingBallsChecker.CanTakeShot();
+        }
 
         public void OnNoLifeLeft()
         {

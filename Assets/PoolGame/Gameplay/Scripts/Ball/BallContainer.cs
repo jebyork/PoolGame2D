@@ -78,7 +78,7 @@ namespace PoolGame.Gameplay.Ball
         {
             foreach (BallController ball in pooledBalls)
             {
-                if (ball != null && ball.BallType == ballType)
+                if (ball != null && ball.GetBallType() == ballType)
                 {
                     return ball;
                 }
@@ -93,7 +93,7 @@ namespace PoolGame.Gameplay.Ball
 
             foreach (BallController ball in activeBalls)
             {
-                if (ball != null && ball.BallType == ballType)
+                if (ball != null && ball.GetBallType() == ballType)
                 {
                     count++;
                 }

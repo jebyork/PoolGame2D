@@ -5,20 +5,47 @@ using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
+    public enum MidTurnShotRule
+    {
+        Disabled,
+        AfterDelay,
+        WhenBallsBelowSpeed,
+        AfterDelayAndBallsBelowSpeed,
+        AfterDelayOrBallsBelowSpeed
+    }
+
     public class MovingBallsChecker : MonoBehaviour
     {
+        [Serializable]
+        private struct BallSpeedRule
+        {
+            public bool enabled;
+            [Min(0f)] public float speedThreshold;
+        }
+
         [Header("Components")] 
         [SerializeField] private PlayerShootingController playerShootingController;
         [SerializeField] private BallContainer ballContainer;
         [SerializeField] private GameState gameState;
-        
-        [SerializeField] private float stopSpeedThreshold = 0.3f;
-        
-        
+
+        [Header("Turn Complete")]
+        [SerializeField] private bool forceStopBallsWhenTurnCompletes = true;
+        [SerializeField] private BallSpeedRule cueBallStopRule = new() { enabled = true, speedThreshold = 0.3f };
+        [SerializeField] private BallSpeedRule objectBallStopRule = new() { enabled = true, speedThreshold = 0.3f };
+
+        [Header("Mid-Turn Shot")]
+        [SerializeField] private MidTurnShotRule midTurnShotRule = MidTurnShotRule.Disabled;
+        [SerializeField, Min(0f)] private float delayBeforeNextShot = 0.5f;
+        [SerializeField] private BallSpeedRule cueBallShotRule = new() { enabled = true, speedThreshold = 2f };
+        [SerializeField] private BallSpeedRule objectBallShotRule = new() { enabled = false, speedThreshold = 2f };
+
         public Action OnBallsStoppedMoving;
-        
+
         private bool _ballsInPlay;
-        
+        private float _lastShotTime;
+
+        public bool BallsInPlay => _ballsInPlay;
+
         private void OnEnable()
         {
             if (playerShootingController)
@@ -39,7 +66,8 @@ namespace PoolGame.Gameplay.Ball
         {
             if (state != GameStateEnum.Finished)
                 return;
-            
+
+            _ballsInPlay = false;
             ForceStopAllBalls();
         }
 
@@ -47,11 +75,13 @@ namespace PoolGame.Gameplay.Ball
         {
             if (!_ballsInPlay)
                 return;
-            
-            if (AnyBallAboveThreshold())
+
+            if (AnyBallAboveStopThreshold())
                 return;
 
-            ForceStopAllBalls();
+            if (forceStopBallsWhenTurnCompletes)
+                ForceStopAllBalls();
+
             _ballsInPlay = false;
             OnBallsStoppedMoving?.Invoke();
         }
@@ -59,21 +89,75 @@ namespace PoolGame.Gameplay.Ball
         private void OnShotTaken()
         {
             _ballsInPlay = true;
+            _lastShotTime = Time.time;
         }
 
-        private bool AnyBallAboveThreshold()
+        public bool CanTakeShot()
+        {
+            if (!_ballsInPlay)
+                return true;
+
+            return midTurnShotRule switch
+            {
+                MidTurnShotRule.Disabled => false,
+                MidTurnShotRule.AfterDelay => HasDelayElapsed(),
+                MidTurnShotRule.WhenBallsBelowSpeed => AreShotSpeedRulesSatisfied(),
+                MidTurnShotRule.AfterDelayAndBallsBelowSpeed => HasDelayElapsed() && AreShotSpeedRulesSatisfied(),
+                MidTurnShotRule.AfterDelayOrBallsBelowSpeed => HasDelayElapsed() || AreShotSpeedRulesSatisfied(),
+                _ => false
+            };
+        }
+
+        private bool AnyBallAboveStopThreshold()
+        {
+            return AnyBallMatchesThresholdRule(IsAboveStopThreshold);
+        }
+
+        private bool AreShotSpeedRulesSatisfied()
+        {
+            return !AnyBallMatchesThresholdRule(IsAboveShotThreshold);
+        }
+
+        private bool AnyBallMatchesThresholdRule(Func<BallController, bool> matchesRule)
         {
             if (ballContainer == null)
                 return false;
 
             foreach (BallController ball in ballContainer.ActiveBalls)
             {
-                if (ball != null && ball.IsMovingAboveSpeed(stopSpeedThreshold))
-                {
+                if (ball != null && matchesRule(ball))
                     return true;
-                }
             }
+
             return false;
+        }
+
+        private bool IsAboveStopThreshold(BallController ball)
+        {
+            return IsBallAboveThreshold(ball, cueBallStopRule, objectBallStopRule);
+        }
+
+        private bool IsAboveShotThreshold(BallController ball)
+        {
+            return IsBallAboveThreshold(ball, cueBallShotRule, objectBallShotRule);
+        }
+
+        private static bool IsBallAboveThreshold(
+            BallController ball,
+            BallSpeedRule cueBallRule,
+            BallSpeedRule objectBallRule)
+        {
+            return ball.GetBallType() switch
+            {
+                BallType.CueBall => cueBallRule.enabled && ball.IsMovingAboveSpeed(cueBallRule.speedThreshold),
+                BallType.ObjectBall => objectBallRule.enabled && ball.IsMovingAboveSpeed(objectBallRule.speedThreshold),
+                _ => false
+            };
+        }
+
+        private bool HasDelayElapsed()
+        {
+            return Time.time >= _lastShotTime + delayBeforeNextShot;
         }
 
         private void ForceStopAllBalls()

@@ -1,6 +1,6 @@
 using System;
 using PoolGame.Gameplay.Attributes;
-using PoolGame.Gameplay.Table.Pockets;
+using PoolGame.Gameplay.Pockets;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.GameMode
@@ -44,7 +44,7 @@ namespace PoolGame.Gameplay.GameMode
             if (evt.PottedBall == null)
                 return;
 
-            switch (evt.PottedBall.BallType)
+            switch (evt.PottedBall.GetBallType())
             {
                 case BallType.ObjectBall:
                     _objectBallsPocketed++;

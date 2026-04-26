@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using PoolGame.Core.Helpers;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball.Spawning
@@ -60,12 +59,11 @@ namespace PoolGame.Gameplay.Ball.Spawning
 
         private float GetBallRadius()
         {
-            CircleCollider2D circle = ballPrefab.GetComponent<CircleCollider2D>();
-            if (circle != null) 
-                return circle.GetWorldCircleRadius();
-            Debug.LogError("[ScatterBallSpawner] ballPrefab is missing CircleCollider2D.", this);
-            return 0f;
-
+            return BoxSpawnUtility.TryGetPlacementRadius(
+                ballPrefab,
+                this,
+                nameof(ScatterBallSpawner),
+                out float radius) ? radius : 0f;
         }
 
         private List<Vector2> GenerateSpawnPositions(float ballRadius)
@@ -75,7 +73,15 @@ namespace PoolGame.Gameplay.Ball.Spawning
 
             for (int i = 0; i < ballCount; i++)
             {
-                if (!TryFindSpawnPosition(ballRadius, minCenterDistance, positions, out Vector2 spawnPosition))
+                if (!BoxSpawnUtility.TryFindSpawnPosition(
+                        boxCollider,
+                        ballRadius,
+                        maxAttemptsPerBall,
+                        candidate => BoxSpawnUtility.IsFarEnoughFromPositions(
+                            candidate,
+                            minCenterDistance,
+                            positions),
+                        out Vector2 spawnPosition))
                 {
                     Debug.LogWarning(
                         $"[ScatterBallSpawner] Only found {positions.Count} valid spawn positions out of {ballCount}. " +
@@ -87,56 +93,6 @@ namespace PoolGame.Gameplay.Ball.Spawning
             }
 
             return positions;
-        }
-
-        private bool TryFindSpawnPosition(
-            float ballRadius,
-            float minCenterDistance,
-            List<Vector2> existingPositions,
-            out Vector2 spawnPosition)
-        {
-            int attemptLimit = Mathf.Max(1, maxAttemptsPerBall);
-
-            for (int attempt = 0; attempt < attemptLimit; attempt++)
-            {
-                Vector2 candidate = GetRandomPointInsideBox(ballRadius);
-                if (!IsFarEnoughFromExisting(candidate, minCenterDistance, existingPositions)) continue;
-                spawnPosition = candidate;
-                return true;
-            }
-
-            spawnPosition = Vector2.zero;
-            return false;
-        }
-
-        private Vector2 GetRandomPointInsideBox(float ballRadius)
-        {
-            Vector2 halfSize = boxCollider.size * 0.5f;
-            Vector2 min = boxCollider.offset - halfSize + Vector2.one * ballRadius;
-            Vector2 max = boxCollider.offset + halfSize - Vector2.one * ballRadius;
-
-            float x = Random.Range(min.x, max.x);
-            float y = Random.Range(min.y, max.y);
-
-            return boxCollider.transform.TransformPoint(new Vector2(x, y));
-        }
-
-        private static bool IsFarEnoughFromExisting(
-            Vector2 candidate,
-            float minCenterDistance,
-            List<Vector2> existingPositions)
-        {
-            float minCenterDistanceSquared = minCenterDistance * minCenterDistance;
-
-            foreach (Vector2 existingPosition in existingPositions)
-            {
-                if ((candidate - existingPosition).sqrMagnitude < minCenterDistanceSquared)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }

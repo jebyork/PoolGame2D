@@ -47,6 +47,9 @@ TagManager:
   - name: Table
     uniqueID: 584881135
     locked: 0
+  - name: Pickup
+    uniqueID: 4197445161
+    locked: 0
   - name: Ball
     uniqueID: 3418093025
     locked: 0

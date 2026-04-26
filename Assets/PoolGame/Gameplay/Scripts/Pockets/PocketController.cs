@@ -1,9 +1,8 @@
-using System;
 using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
 using UnityEngine;
 
-namespace PoolGame.Gameplay.Table.Pockets
+namespace PoolGame.Gameplay.Pockets
 {
     public class PocketController : MonoBehaviour
     {

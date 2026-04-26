@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d74e1ae921148e99f361c3b24a2a05b, type: 3}
+  m_Name: GainMaxLife_!_Data
+  m_EditorClassIdentifier: 
+  Visual: {fileID: 8354995144414690496, guid: a1ce58f91fccda8499df4b025ca2d736, type: 3}
+  PickupEffect: {fileID: 11400000, guid: 5ea79b9457e540447853d761903d9887, type: 2}
+  BroadcastMessage: Increased Max Life
+  BallType: 0
+  SpawnRateWeight: 0.4

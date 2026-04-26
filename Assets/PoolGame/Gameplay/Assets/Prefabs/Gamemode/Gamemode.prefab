@@ -15,6 +15,9 @@ GameObject:
   - component: {fileID: 2445827281382094989}
   - component: {fileID: 3106033089608654525}
   - component: {fileID: 7351673737118223841}
+  - component: {fileID: 905761759862367943}
+  - component: {fileID: 32762271239978653}
+  - component: {fileID: 3464733420708897003}
   m_Layer: 0
   m_Name: Gamemode
   m_TagString: Untagged
@@ -49,8 +52,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845dbabb8f9143f8a1d8f1c9a630c232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotTakenEvent: {fileID: 11400000, guid: 6d004fcdd03fd824ea5fb7cf288f8dbc, type: 2}
-  ballsStoppedEvent: {fileID: 11400000, guid: 5b7b6ed1807e84242a7a7d4954687f30, type: 2}
+  playerShootingController: {fileID: 0}
+  movingBallsChecker: {fileID: 0}
 --- !u!114 &442128898340632641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,8 +68,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ballContainer: {fileID: 0}
   gameState: {fileID: 492913434187699060}
-  spawnObjectBallsCommand: {fileID: 11400000, guid: cbecff46df92a40498da657901082adf, type: 2}
-  spawnCueBallCommand: {fileID: 11400000, guid: f166982b09ba02843badbcfe81b00369, type: 2}
+  spawnObjectBallsCommand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Ball.Spawning.ScatterBallSpawner,
+          GameplayAssembely
+        m_MethodName: Spawn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  spawnCueBallCommand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: PoolGame.Gameplay.Ball.Spawning.SingleBallSpawner,
+          GameplayAssembely
+        m_MethodName: Spawn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &218564847479593343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: {fileID: 492913434187699060}
-  playerStats: {fileID: 2445827281382094989}
+  turnModifiers: {fileID: 2445827281382094989}
   life: {fileID: 3106033089608654525}
   score: {fileID: 7351673737118223841}
   ballPocketedEvent: {fileID: 11400000, guid: bf19d2433d449364381a113faf04af75, type: 2}
@@ -97,9 +130,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scorePerObjectBall:
-    baseValue: 0
+    baseValue: 5
   lifePunishment:
-    baseValue: 0
+    baseValue: 1
 --- !u!114 &3106033089608654525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +146,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingLife: 3
-  maxLife: 3
+  currentMaxLife: 5
+  maximumEverLife: 10
   onNoLife:
     m_PersistentCalls:
       m_Calls:
@@ -141,5 +175,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814372a2719d4d9e9e3ff407ee1f4efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreIncreaseBase: 5
-  scoreDecreaseBase: 3
+--- !u!114 &905761759862367943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8081649301393735766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc8bf46a1827452783aa18b0eb27af38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifeAttribute: {fileID: 3106033089608654525}
+--- !u!114 &32762271239978653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8081649301393735766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9901a3aed51478a8e08cd0843a4a877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreAttribute: {fileID: 7351673737118223841}
+--- !u!114 &3464733420708897003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8081649301393735766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3501bfd38afa4183bfe987b54eff79ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pickupData:
+  - {fileID: 11400000, guid: 08e275cbe5eb0d24b84a87ebc75e27ba, type: 2}
+  - {fileID: 11400000, guid: 3f1ef4cc7d3c67348b8cb05690b11c27, type: 2}
+  - {fileID: 11400000, guid: 2cd97ca79015cec43aecb1eb03886f1a, type: 2}
+  - {fileID: 11400000, guid: 56447c1908502ed45b83f8156d4595fb, type: 2}
+  - {fileID: 11400000, guid: e9a0136ab1186be499448d373ba42aa5, type: 2}
+  - {fileID: 11400000, guid: cf1d1dd83866dff4cad8671a7ab58428, type: 2}
