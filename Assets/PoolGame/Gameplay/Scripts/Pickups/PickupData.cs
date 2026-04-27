@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using PoolGame.Gameplay.Pickups.Effects;
+using UnityEngine;
 
 namespace PoolGame.Gameplay.Pickups
 {
@@ -9,6 +10,8 @@ namespace PoolGame.Gameplay.Pickups
         public PickupEffect PickupEffect;
         public string BroadcastMessage;
         public BallType BallType;
+        public bool anyBallType;
         public float SpawnRateWeight = 1;
+        
     }
 }

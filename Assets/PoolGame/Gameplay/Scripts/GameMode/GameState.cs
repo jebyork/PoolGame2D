@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
+using PoolGame.Gameplay.GameMode.TurnEvaluation;
 using PoolGame.Gameplay.Shooting;
 using UnityEngine;
 
@@ -17,6 +19,8 @@ namespace PoolGame.Gameplay.GameMode
 
     public class GameState : MonoBehaviour
     {
+        public Action<GameStateEnum> OnGameStateChanged;
+        
         [SerializeField] private PlayerShootingController playerShootingController;
         [SerializeField] private MovingBallsChecker movingBallsChecker;
 
@@ -25,20 +29,25 @@ namespace PoolGame.Gameplay.GameMode
             private set
             {
                 _gameState = value;
-                onGameStateChanged?.Invoke(_gameState);
-            }}
-
-        public Action<GameStateEnum> onGameStateChanged;
+                OnGameStateChanged?.Invoke(_gameState);
+            }
+        }
 
         private int _turn;
         public int Turn => _turn;
 
         private readonly List<ITurnOutcomeHandler> _turnOutcomeHandlers = new();
 
-        private void Update()
+        #region Lifecycle
+
+        private void OnValidate()
         {
-            Logwin.Log("Turn" , Turn, "Game State");
-            Logwin.Log("Game State", CurrentGameState, "Game State");
+            ReferenceValidation.LogMissing(
+                this,
+                $"{gameObject.name} | Game State",
+                (nameof(playerShootingController), playerShootingController),
+                (nameof(movingBallsChecker), movingBallsChecker)
+            );
         }
 
         private void OnEnable()
@@ -53,7 +62,6 @@ namespace PoolGame.Gameplay.GameMode
         {
             if (playerShootingController)
                 playerShootingController.OnShotTaken -= ShotTaken;
-
             if (movingBallsChecker)
                 movingBallsChecker.OnBallsStoppedMoving -= BallsStopped;
         }
@@ -62,10 +70,15 @@ namespace PoolGame.Gameplay.GameMode
         {
             CurrentGameState = GameStateEnum.AwaitingTurn;
         }
-
-        public void RegisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Add(handler);
-        public void UnregisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Remove(handler);
-
+        
+        private void Update()
+        {
+            Logwin.Log("Turn" , Turn, "Game State");
+            Logwin.Log("Game State", CurrentGameState, "Game State");
+        }
+        
+        #endregion
+        
         private void ShotTaken()
         {
             if (CurrentGameState == GameStateEnum.Finished)
@@ -77,12 +90,18 @@ namespace PoolGame.Gameplay.GameMode
                 return;
             }
 
-            CurrentGameState = GameStateEnum.TurnInProgress;
+            if (CanEnterTurnInProgress(CurrentGameState))
+                CurrentGameState = GameStateEnum.TurnInProgress;
         }
-
+        
+        private static bool CanEnterTurnInProgress(GameStateEnum state)
+        {
+            return state is GameStateEnum.AwaitingTurn;
+        }
+        
         private void BallsStopped()
         {
-            if (CurrentGameState == GameStateEnum.Finished || CurrentGameState != GameStateEnum.TurnInProgress)
+            if (CurrentGameState is GameStateEnum.Finished or not GameStateEnum.TurnInProgress)
                 return;
 
             CompleteTurn(GameStateEnum.AwaitingTurn);
@@ -94,7 +113,17 @@ namespace PoolGame.Gameplay.GameMode
             CurrentGameState = GameStateEnum.TurnEvaluation;
             BeginTurnEvaluation(nextState);
         }
+        
+        public void SetGameOver()
+        {
+            CurrentGameState = GameStateEnum.Finished;
+        }
+        
+        #region Evaluation
 
+        public void RegisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Add(handler);
+        public void UnregisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Remove(handler);
+        
         private void BeginTurnEvaluation(GameStateEnum nextState)
         {
             if (_turnOutcomeHandlers.Count == 0)
@@ -116,9 +145,10 @@ namespace PoolGame.Gameplay.GameMode
             }
         }
 
-        public void SetGameOver()
-        {
-            CurrentGameState = GameStateEnum.Finished;
-        }
+        #endregion
+        
+ 
+
+
     }
 }

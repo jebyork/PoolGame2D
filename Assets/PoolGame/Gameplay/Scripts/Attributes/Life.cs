@@ -18,11 +18,8 @@ namespace PoolGame.Gameplay.Attributes
 
         public event Action<int> OnMaxLifeChanged;
 
-        private void Update()
-        {
-            Logwin.Log("Life", AttributeValue, "Life");
-        }
-
+        #region Lifecycle
+        
         private void Awake()
         {
             currentMaxLife = Mathf.Clamp(
@@ -32,6 +29,13 @@ namespace PoolGame.Gameplay.Attributes
 
             SetLife(startingLife);
         }
+        
+        private void Update()
+        {
+            Logwin.Log("Life", AttributeValue, "Life");
+        }
+        
+        #endregion
 
         public override void DecreaseAttribute(int amount)
         {

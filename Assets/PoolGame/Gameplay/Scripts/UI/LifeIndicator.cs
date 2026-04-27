@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Attributes;
+using PoolGame.Gameplay.GameMode;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,7 +22,9 @@ namespace PoolGame.Gameplay.UI
         private readonly List<VisualElement> _lifeSlots = new();
         private VisualTreeAsset _template;
         private VisualElement _lifeContainer;
-
+        
+        #region Lifecycle
+        
         private void OnEnable()
         {
             _template = Resources.Load<VisualTreeAsset>(TemplateResourcePath);
@@ -44,6 +49,10 @@ namespace PoolGame.Gameplay.UI
             lifeAttribute.OnAttributeChanged -= UpdateLifeDisplay;
             lifeAttribute.OnMaxLifeChanged -= MaxLifeDisplayChanged;
         }
+        
+        #endregion
+
+
 
         private void MaxLifeDisplayChanged(int newMax)
         {

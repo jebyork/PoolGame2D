@@ -6,6 +6,9 @@ namespace PoolGame.Core.Helpers
     {
         public static float GetWorldCircleRadius(this CircleCollider2D col)
         {
+            if (col == null)
+                return 0f;
+
             Vector3 scale = col.transform.lossyScale;
             float maxScale = Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
             return col.radius * maxScale;
@@ -38,6 +41,9 @@ namespace PoolGame.Core.Helpers
             this CircleCollider2D containerCircle,
             CircleCollider2D targetCircle)
         {
+            if (containerCircle == null || targetCircle == null)
+                return 0f;
+
             float containerRadius = containerCircle.GetWorldCircleRadius();
             float targetRadius = targetCircle.GetWorldCircleRadius();
 

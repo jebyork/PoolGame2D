@@ -1,5 +1,8 @@
 using System;
+using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
+using PoolGame.Gameplay.GameMode.TurnEvaluation;
+using PoolGame.Gameplay.Shooting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +19,8 @@ namespace PoolGame.Gameplay.GameMode
         public UnityEvent spawnObjectBallsCommand;
         public UnityEvent spawnCueBallCommand;
 
+        #region Lifecycle
+        
         private void OnEnable()
         {
             gameState.RegisterHandler(this);
@@ -30,6 +35,8 @@ namespace PoolGame.Gameplay.GameMode
         {
             SpawnBalls();
         }
+        
+        #endregion
 
         public void OnTurnEvaluate(Action onComplete)
         {

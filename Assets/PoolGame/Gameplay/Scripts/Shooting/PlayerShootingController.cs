@@ -10,13 +10,16 @@ namespace PoolGame.Gameplay.Shooting
 {
     public class PlayerShootingController : MonoBehaviour
     {
+        [Header("Strategies")]
         [SerializeField] private GetShootableTargetStrategy getShootableTargetStrategy;
         [SerializeField] private ObservableVector2 mouseScreenPosition;
         [SerializeField] private CalculateAimDataStrategy calculateAimDataStrategy;
         
-        
-        [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
+        [Header("References")]
         [SerializeField] private PotAllGameMode potAllGameMode;
+        
+        [Header("Shot Settings")]
+        [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
         
         public event Action OnShotTaken;
         
@@ -28,10 +31,24 @@ namespace PoolGame.Gameplay.Shooting
         public AimingData CurrentAimingData => _currentAimingData;
         public bool HasActiveAim => _currentCalculationData.Shootable != null;
 
+        #region Lifecycle
+        
         private void Awake()
         {
-            potAllGameMode = FindFirstObjectByType<PotAllGameMode>();
+            if (potAllGameMode == null)
+                potAllGameMode = FindFirstObjectByType<PotAllGameMode>();
         }
+        
+        private void Update()
+        {
+            if (_currentCalculationData.Shootable == null)
+                return;
+
+            _currentCalculationData.CurrentMousePos = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
+            _currentAimingData = calculateAimDataStrategy.CalculateAimData(_currentCalculationData);
+        }
+        
+        #endregion
 
         public void OnStartedAiming()
         {
@@ -58,16 +75,7 @@ namespace PoolGame.Gameplay.Shooting
 
             _currentCalculationData.Shootable = null;
         }
-
-        private void Update()
-        {
-            if (_currentCalculationData.Shootable == null)
-                return;
-
-            _currentCalculationData.CurrentMousePos = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
-            _currentAimingData = calculateAimDataStrategy.CalculateAimData(_currentCalculationData);
-        }
-
+        
         public bool CanShootCurrentAim()
         {
             if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())

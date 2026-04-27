@@ -1,4 +1,6 @@
-﻿using PoolGame.Game.Line;
+﻿using PoolGame.Core.Helpers;
+using PoolGame.Game.Line;
+using PoolGame.Gameplay.Shooting;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Guides
@@ -14,29 +16,15 @@ namespace PoolGame.Gameplay.Guides
         
         [SerializeField] private float endOffset;
 
-
-        private void OnValidate()
-        {
-            if (firstGuide == null)
-            {
-                Debug.LogWarning($"First guide drawer has not been assigned on {gameObject.name}.");
-            }
-            
-            if (secondGuide == null)
-            {
-                Debug.LogWarning($"Second guide drawer has not been assigned on {gameObject.name}.");
-            }
-            
-            if (circleGuide == null)
-            {
-                Debug.LogWarning($"Circle guide drawer has not been assigned on {gameObject.name}.");
-            }
-        }
-
+        #region Lifecycle
+        
         private void Start()
         {
             HideAllGuide();
         }
+
+        #endregion
+
         
         public void DrawFirstGuide(GuideLineVisualData data)
         {

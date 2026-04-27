@@ -11,7 +11,14 @@ namespace PoolGame.Gameplay.Ball.Spawning
         [SerializeField] private float rackAngleDeg = 0f;
         [SerializeField] private int previewSegments = 20;
 
-        private void ProcessPositions(Action<Vector2, float> callback)
+        
+        public override void Spawn()
+        {
+            ProcessPositions((pos , radius) => 
+                SpawnBall(new Vector3(pos.x, pos.y, 0f)));
+        }
+        
+        private void ProcessPositions(Action<Vector2, float> response)
         {
             if (!CanSpawn())
                 return;
@@ -19,29 +26,12 @@ namespace PoolGame.Gameplay.Ball.Spawning
             float ballRadius = GetBallRadius();
             Vector2[] positions = CalculateRackPositions(ballRadius);
 
-            foreach (Vector2 position in positions)
+            foreach (Vector2 pos in positions)
             {
-                callback(position, ballRadius);
+                response(pos, ballRadius);
             }
         }
         
-        public override void Spawn()
-        {
-            ProcessPositions((pos, radius) => 
-                SpawnBall(new Vector3(pos.x, pos.y, 0f)));
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            ProcessPositions((pos, radius) =>
-                CircleHelpers.DrawCircle(
-                    pos, 
-                    radius, 
-                    previewSegments, 
-                    Color.red)
-                );
-        }
-
         private bool CanSpawn()
         {
             return ballCount > 0 && ballPrefab != null;
@@ -50,13 +40,11 @@ namespace PoolGame.Gameplay.Ball.Spawning
         private float GetBallRadius()
         {
             CircleCollider2D circle = ballPrefab.GetComponent<CircleCollider2D>();
-            if (circle == null)
-            {
-                Debug.LogError("[TriangleBallSpawner] ballPrefab is missing CircleCollider2D");
-                return 0f;
-            }
+            if (circle != null) 
+                return circle.GetWorldCircleRadius();
+            Debug.LogError("[TriangleBallSpawner] ballPrefab is missing CircleCollider2D");
+            return 0f;
 
-            return circle.GetWorldCircleRadius();
         }
         
         private Vector2[] CalculateRackPositions(float ballRadius)
@@ -140,15 +128,22 @@ namespace PoolGame.Gameplay.Ball.Spawning
             return -rowWidth * 0.5f;
         }
 
-        private Vector2 GetBallPosition(
-            Vector2 rowCenter,
-            Vector2 sideways,
-            float startOffset,
-            int column,
-            float spacing)
+        private Vector2 GetBallPosition(Vector2 rowCenter, Vector2 sideways, float startOffset,
+            int column, float spacing)
         {
             float offset = startOffset + column * spacing;
             return rowCenter + sideways * offset;
+        }
+        
+        private void OnDrawGizmosSelected()
+        {
+            ProcessPositions((pos, radius) =>
+                CircleHelpers.DrawCircle(
+                    pos, 
+                    radius, 
+                    previewSegments, 
+                    Color.red)
+            );
         }
     }
 }

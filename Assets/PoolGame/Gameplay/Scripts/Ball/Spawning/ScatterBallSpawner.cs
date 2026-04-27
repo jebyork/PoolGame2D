@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PoolGame.Core.Helpers;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball.Spawning
@@ -9,20 +10,25 @@ namespace PoolGame.Gameplay.Ball.Spawning
         [SerializeField] private int ballCount = 15;
         [SerializeField] private float gapBetweenBalls = 0.5f;
         [SerializeField] private int maxAttemptsPerBall = 50;
-        [SerializeField] private BoxCollider2D boxCollider;
+        private BoxCollider2D _boxCollider;
+
+        #region Lifecycle
 
         private void Reset()
         {
-            boxCollider = GetComponent<BoxCollider2D>();
+            _boxCollider = GetComponent<BoxCollider2D>();
         }
 
         private void Awake()
         {
-            if (boxCollider == null)
+            if (_boxCollider == null)
             {
-                boxCollider = GetComponent<BoxCollider2D>();
+                _boxCollider = GetComponent<BoxCollider2D>();
             }
         }
+        
+        #endregion
+
 
         public override void Spawn()
         {
@@ -51,7 +57,7 @@ namespace PoolGame.Gameplay.Ball.Spawning
                 return false;
             }
 
-            if (boxCollider != null) return true;
+            if (_boxCollider != null) return true;
             Debug.LogError("[ScatterBallSpawner] BoxCollider2D reference is missing.", this);
             return false;
 
@@ -73,26 +79,36 @@ namespace PoolGame.Gameplay.Ball.Spawning
 
             for (int i = 0; i < ballCount; i++)
             {
-                if (!BoxSpawnUtility.TryFindSpawnPosition(
-                        boxCollider,
-                        ballRadius,
-                        maxAttemptsPerBall,
-                        candidate => BoxSpawnUtility.IsFarEnoughFromPositions(
-                            candidate,
-                            minCenterDistance,
-                            positions),
-                        out Vector2 spawnPosition))
+                bool foundPosition = BoxSpawnUtility.TryFindSpawnPosition(
+                    _boxCollider,
+                    ballRadius,
+                    maxAttemptsPerBall,
+                    candidate => IsValidSpawnPosition(candidate, minCenterDistance, positions),
+                    out Vector2 spawnPosition);
+
+                if (!foundPosition)
                 {
-                    Debug.LogWarning(
-                        $"[ScatterBallSpawner] Only found {positions.Count} valid spawn positions out of {ballCount}. " +
-                        "Increase the box size or reduce the ball count / gap.",
-                        this);
+                    LogInsufficientSpawnPositions(positions.Count);
                     break;
                 }
+
                 positions.Add(spawnPosition);
             }
 
             return positions;
+        }
+        
+        private bool IsValidSpawnPosition(Vector2 candidate, float minCenterDistance, List<Vector2> positions)
+        {
+            return BoxSpawnUtility.IsFarEnoughFromPositions(candidate, minCenterDistance, positions);
+        }
+
+        private void LogInsufficientSpawnPositions(int validPositionCount)
+        {
+            Debug.LogWarning(
+                $"[ScatterBallSpawner] Only found {validPositionCount} valid spawn positions out of {ballCount}. " +
+                "Increase the box size or reduce the ball count / gap.",
+                this);
         }
     }
 }

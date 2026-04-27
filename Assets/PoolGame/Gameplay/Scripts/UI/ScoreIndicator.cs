@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Attributes;
 using UnityEngine;
@@ -20,6 +21,8 @@ namespace PoolGame.Gameplay.UI
         private readonly List<VisualElement> _scoreSlots = new();
         private VisualTreeAsset _template;
         private VisualElement _scoreContainer;
+
+        #region Lifecycle
         
         private void OnEnable()
         {
@@ -41,6 +44,8 @@ namespace PoolGame.Gameplay.UI
 
             scoreAttribute.OnAttributeChanged -= ScoreChanged;
         }
+        
+        #endregion
 
         private void ScoreChanged(int val)
         {

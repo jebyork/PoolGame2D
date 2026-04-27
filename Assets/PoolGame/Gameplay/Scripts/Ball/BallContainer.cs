@@ -7,15 +7,15 @@ namespace PoolGame.Gameplay.Ball
 {
     public class BallContainer : MonoBehaviour
     {
-        [Space]
-        [SerializeField] private List<BallController> pooledBalls = new();
-        [SerializeField] private List<BallController> activeBalls = new();
+         private readonly List<BallController> _pooledBalls = new();
+        private readonly List<BallController> _activeBalls = new();
 
-        public IReadOnlyList<BallController> ActiveBalls => activeBalls;
+        public IReadOnlyList<BallController> ActiveBalls => _activeBalls;
 
         private readonly Dictionary<GameObject, Queue<BallController>> _poolsByPrefab = new();
         private readonly Dictionary<BallController, GameObject> _prefabByBall = new();
 
+        #region Public Functions For Ball (De)Spawning
         public BallController SpawnBall(GameObject prefab, Vector3 position, Transform parent)
         {
             if (prefab == null)
@@ -28,25 +28,17 @@ namespace PoolGame.Gameplay.Ball
             if (ball == null)
                 return null;
 
-            pooledBalls.Remove(ball);
+            _pooledBalls.Remove(ball);
 
-            if (!activeBalls.Contains(ball))
+            if (!_activeBalls.Contains(ball))
             {
-                activeBalls.Add(ball);
+                _activeBalls.Add(ball);
             }
 
             ball.Activate(position, parent);
             return ball;
         }
-
-        public void ReleaseAll()
-        {
-            foreach (BallController ball in ActiveBalls.Reverse())
-            {
-                ReleaseBall(ball);
-            }
-        }
-
+        
         public void ReleaseBall(BallController ball)
         {
             if (ball == null)
@@ -58,11 +50,11 @@ namespace PoolGame.Gameplay.Ball
                 return;
             }
 
-            activeBalls.Remove(ball);
+            _activeBalls.Remove(ball);
 
-            if (!pooledBalls.Contains(ball))
+            if (!_pooledBalls.Contains(ball))
             {
-                pooledBalls.Add(ball);
+                _pooledBalls.Add(ball);
             }
 
             Queue<BallController> pool = GetOrCreatePool(prefab);
@@ -73,35 +65,18 @@ namespace PoolGame.Gameplay.Ball
 
             ball.Deactivate();
         }
-
-        public BallController GetPooledBallOfType(BallType ballType)
+        
+        public void ReleaseAll()
         {
-            foreach (BallController ball in pooledBalls)
+            foreach (BallController ball in ActiveBalls.Reverse())
             {
-                if (ball != null && ball.GetBallType() == ballType)
-                {
-                    return ball;
-                }
+                ReleaseBall(ball);
             }
-
-            return null;
         }
-
-        public int GetActiveBallCount(BallType ballType)
-        {
-            int count = 0;
-
-            foreach (BallController ball in activeBalls)
-            {
-                if (ball != null && ball.GetBallType() == ballType)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
+        
+        #endregion
+        
+        
         private BallController GetAvailableBall(GameObject prefab)
         {
             Queue<BallController> pool = GetOrCreatePool(prefab);
@@ -127,7 +102,7 @@ namespace PoolGame.Gameplay.Ball
             _prefabByBall[ball] = prefab;
             return ball;
         }
-
+        
         private Queue<BallController> GetOrCreatePool(GameObject prefab)
         {
             if (_poolsByPrefab.TryGetValue(prefab, out Queue<BallController> pool))
@@ -139,5 +114,43 @@ namespace PoolGame.Gameplay.Ball
             _poolsByPrefab[prefab] = pool;
             return pool;
         }
+
+        #region Public Functions For Getting Data
+
+        public BallController GetPooledBallOfType(BallType ballType)
+        {
+            foreach (BallController ball in _pooledBalls)
+            {
+                if (ball != null && ball.GetBallType() == ballType)
+                {
+                    return ball;
+                }
+            }
+
+            return null;
+        }
+
+        public int GetActiveBallCount(BallType ballType)
+        {
+            int count = 0;
+
+            foreach (BallController ball in _activeBalls)
+            {
+                if (ball != null && ball.GetBallType() == ballType)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        #endregion
+        
+
+
+        
+
+
     }
 }

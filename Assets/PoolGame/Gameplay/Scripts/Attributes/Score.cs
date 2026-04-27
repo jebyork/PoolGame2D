@@ -7,7 +7,7 @@ namespace PoolGame.Gameplay.Attributes
     public class Score : Attribute
     {
         private static readonly int NoScore = 0;
-
+        
         private void Update()
         {
             Logwin.Log("Score", AttributeValue, "Score");

@@ -1,31 +1,45 @@
+using System;
 using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Pockets
 {
+    [RequireComponent(typeof(CircleCollider2D))]
     public class PocketController : MonoBehaviour
     {
         [SerializeField] private LayerMask ballLayers;
-        [SerializeField] private BallPocketedChannel ballPocketedEvent;
         [SerializeField, Range(0f, 1f)] private float ballOverlapMinPercentage = 0.4f;
         [SerializeField] private BallContainer ballContainer;
         
         private CircleCollider2D _pocketCollider;
         
-        private void Start()
+        public static event Action<BallController, PocketController> OnBallPocketed;
+
+
+        #region Lifecycle
+
+        private void Reset()
         {
             _pocketCollider = GetComponent<CircleCollider2D>();
-            
-            if (ballContainer != null) return;
-            ballContainer = FindFirstObjectByType<BallContainer>();
-            if (ballContainer == null)
-                Debug.LogError("[PocketController] Ball Container is missing on PocketController.");
+
+            if (ballContainer == null) 
+                ballContainer = FindFirstObjectByType<BallContainer>();
         }
 
+        private void Awake()
+        {
+            _pocketCollider = GetComponent<CircleCollider2D>();
+        }
+
+        #endregion
+        
         private void OnTriggerStay2D(Collider2D other)
         {
             if (!ballLayers.ContainsLayer(other.gameObject.layer)) return;
+
+            if (_pocketCollider == null)
+                return;
             
             if (other is not CircleCollider2D ballCircle)
                 return;
@@ -33,25 +47,19 @@ namespace PoolGame.Gameplay.Pockets
             float overlapPercentage =
                 _pocketCollider.GetPercentageOfCircleInside(ballCircle);
             
-            Logwin.Log($"{other.gameObject.name} pocket Overlap", overlapPercentage, "Pockets");
+            Log(other.gameObject, overlapPercentage);
 
             if (overlapPercentage < ballOverlapMinPercentage)
                 return;
             
             BroadcastPocketedEvent(other);
         }
-
         
         private void BroadcastPocketedEvent(Collider2D ball)
         {
             BallController ballController = ball.GetComponent<BallController>();
             
-            BallPocketedEvent pocketedEvt = new BallPocketedEvent
-            {
-                PottedBall = ballController ,
-                Pocket = this
-            };
-            ballPocketedEvent?.RaiseEvent(pocketedEvt);
+            OnBallPocketed?.Invoke(ballController, this);
             RemoveBall(ballController);
         }
 
@@ -65,6 +73,10 @@ namespace PoolGame.Gameplay.Pockets
             
             ballContainer.ReleaseBall(ball);
         }
-        
+
+        private void Log(GameObject overlappingObj, float overlapPercentage)
+        {
+            Logwin.Log($"{overlappingObj.name} pocket Overlap", overlapPercentage, $"{gameObject.name}");
+        }
     }
 }

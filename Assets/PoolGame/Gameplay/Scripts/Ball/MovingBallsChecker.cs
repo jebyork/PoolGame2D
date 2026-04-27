@@ -5,15 +5,6 @@ using UnityEngine;
 
 namespace PoolGame.Gameplay.Ball
 {
-    public enum MidTurnShotRule
-    {
-        Disabled,
-        AfterDelay,
-        WhenBallsBelowSpeed,
-        AfterDelayAndBallsBelowSpeed,
-        AfterDelayOrBallsBelowSpeed
-    }
-
     public class MovingBallsChecker : MonoBehaviour
     {
         [Serializable]
@@ -22,6 +13,16 @@ namespace PoolGame.Gameplay.Ball
             public bool enabled;
             [Min(0f)] public float speedThreshold;
         }
+
+        [Serializable]
+        private struct MidTurnShotSettings
+        {
+            public bool enabled;
+            public bool requireDelay;
+            public bool requireBallsBelowSpeed;
+            public bool requireAllEnabledConditions;
+        }
+
 
         [Header("Components")] 
         [SerializeField] private PlayerShootingController playerShootingController;
@@ -34,24 +35,33 @@ namespace PoolGame.Gameplay.Ball
         [SerializeField] private BallSpeedRule objectBallStopRule = new() { enabled = true, speedThreshold = 0.3f };
 
         [Header("Mid-Turn Shot")]
-        [SerializeField] private MidTurnShotRule midTurnShotRule = MidTurnShotRule.Disabled;
+        [SerializeField] private MidTurnShotSettings midTurnShotSettings = new()
+        {
+            enabled = false,
+            requireDelay = true,
+            requireBallsBelowSpeed = false,
+            requireAllEnabledConditions = true
+        };
         [SerializeField, Min(0f)] private float delayBeforeNextShot = 0.5f;
         [SerializeField] private BallSpeedRule cueBallShotRule = new() { enabled = true, speedThreshold = 2f };
         [SerializeField] private BallSpeedRule objectBallShotRule = new() { enabled = false, speedThreshold = 2f };
-
+        
         public Action OnBallsStoppedMoving;
 
         private bool _ballsInPlay;
         private float _lastShotTime;
 
         public bool BallsInPlay => _ballsInPlay;
+        
+
+        #region Lifecycle
 
         private void OnEnable()
         {
             if (playerShootingController)
                 playerShootingController.OnShotTaken += OnShotTaken;
             if(gameState) 
-                gameState.onGameStateChanged += OnGameStateChanged;
+                gameState.OnGameStateChanged += OnGameStateChanged;
         }
 
         private void OnDisable()
@@ -59,7 +69,7 @@ namespace PoolGame.Gameplay.Ball
             if (playerShootingController)
                 playerShootingController.OnShotTaken -= OnShotTaken;
             if(gameState) 
-                gameState.onGameStateChanged -= OnGameStateChanged;
+                gameState.OnGameStateChanged -= OnGameStateChanged;
         }
 
         private void OnGameStateChanged(GameStateEnum state)
@@ -86,6 +96,10 @@ namespace PoolGame.Gameplay.Ball
             OnBallsStoppedMoving?.Invoke();
         }
 
+        #endregion
+
+        #region Public Functions
+
         private void OnShotTaken()
         {
             _ballsInPlay = true;
@@ -97,16 +111,12 @@ namespace PoolGame.Gameplay.Ball
             if (!_ballsInPlay)
                 return true;
 
-            return midTurnShotRule switch
-            {
-                MidTurnShotRule.Disabled => false,
-                MidTurnShotRule.AfterDelay => HasDelayElapsed(),
-                MidTurnShotRule.WhenBallsBelowSpeed => AreShotSpeedRulesSatisfied(),
-                MidTurnShotRule.AfterDelayAndBallsBelowSpeed => HasDelayElapsed() && AreShotSpeedRulesSatisfied(),
-                MidTurnShotRule.AfterDelayOrBallsBelowSpeed => HasDelayElapsed() || AreShotSpeedRulesSatisfied(),
-                _ => false
-            };
+            return CanTakeMidTurnShot();
         }
+
+        #endregion
+
+        #region Threshold Checks
 
         private bool AnyBallAboveStopThreshold()
         {
@@ -147,7 +157,9 @@ namespace PoolGame.Gameplay.Ball
             BallSpeedRule cueBallRule,
             BallSpeedRule objectBallRule)
         {
-            return ball.GetBallType() switch
+            BallType ballType = ball.GetBallType();
+
+            return ballType switch
             {
                 BallType.CueBall => cueBallRule.enabled && ball.IsMovingAboveSpeed(cueBallRule.speedThreshold),
                 BallType.ObjectBall => objectBallRule.enabled && ball.IsMovingAboveSpeed(objectBallRule.speedThreshold),
@@ -155,10 +167,38 @@ namespace PoolGame.Gameplay.Ball
             };
         }
 
+        #endregion
+
+        #region Mid Turn Rules
+
+        private bool CanTakeMidTurnShot()
+        {
+            if (!midTurnShotSettings.enabled)
+                return false;
+
+            bool shouldCheckDelay = midTurnShotSettings.requireDelay;
+            bool shouldCheckSpeed = midTurnShotSettings.requireBallsBelowSpeed;
+
+            if (!shouldCheckDelay && !shouldCheckSpeed)
+                return true;
+
+            bool delaySatisfied = !shouldCheckDelay || HasDelayElapsed();
+            bool speedSatisfied = !shouldCheckSpeed || AreShotSpeedRulesSatisfied();
+
+            if (midTurnShotSettings.requireAllEnabledConditions)
+                return delaySatisfied && speedSatisfied;
+
+            return delaySatisfied || speedSatisfied;
+        }
+
         private bool HasDelayElapsed()
         {
             return Time.time >= _lastShotTime + delayBeforeNextShot;
         }
+
+        #endregion
+
+        #region Stop
 
         private void ForceStopAllBalls()
         {
@@ -170,5 +210,7 @@ namespace PoolGame.Gameplay.Ball
                 ball?.ForceStop();
             }
         }
+
+        #endregion
     }
 }
