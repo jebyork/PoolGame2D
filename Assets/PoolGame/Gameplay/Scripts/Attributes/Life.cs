@@ -47,6 +47,11 @@ namespace PoolGame.Gameplay.Attributes
             SetLife(AttributeValue + amount);
         }
 
+        public override void ResetAttribute()
+        {
+            SetLife(startingLife);
+        }
+
         public void AdjustMaxLife(int amount, bool adjustLife = false)
         {
             currentMaxLife = Mathf.Clamp(currentMaxLife + amount, NoLife, maximumEverLife);

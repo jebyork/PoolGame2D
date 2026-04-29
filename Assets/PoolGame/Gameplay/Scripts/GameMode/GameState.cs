@@ -37,19 +37,10 @@ namespace PoolGame.Gameplay.GameMode
         public int Turn => _turn;
 
         private readonly List<ITurnOutcomeHandler> _turnOutcomeHandlers = new();
+        private readonly List<IStartOutcomeHandler> _startOutcomeHandlers = new();
 
         #region Lifecycle
-
-        private void OnValidate()
-        {
-            ReferenceValidation.LogMissing(
-                this,
-                $"{gameObject.name} | Game State",
-                (nameof(playerShootingController), playerShootingController),
-                (nameof(movingBallsChecker), movingBallsChecker)
-            );
-        }
-
+        
         private void OnEnable()
         {
             if (playerShootingController)
@@ -144,11 +135,7 @@ namespace PoolGame.Gameplay.GameMode
                 });
             }
         }
-
-        #endregion
         
- 
-
-
+        #endregion
     }
 }

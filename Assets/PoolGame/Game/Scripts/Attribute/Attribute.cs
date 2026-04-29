@@ -23,5 +23,7 @@ namespace PoolGame.Game.Attribute
         
         public int GetAttributeValue() => _attributeValue;
         
+        public abstract void ResetAttribute();
+        
     }
 }

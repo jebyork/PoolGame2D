@@ -22,5 +22,10 @@ namespace PoolGame.Gameplay.Attributes
         {
             AttributeValue += amount;
         }
+
+        public override void ResetAttribute()
+        {
+            AttributeValue = NoScore;
+        }
     }
 }
