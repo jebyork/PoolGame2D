@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using PoolGame.Core.Helpers;
-using PoolGame.Gameplay.Ball;
-using PoolGame.Gameplay.GameMode.TurnEvaluation;
-using PoolGame.Gameplay.Shooting;
+
 using UnityEngine;
 
 namespace PoolGame.Gameplay.GameMode
 {
     public enum GameStateEnum
     {
+        Entry,
         Starting,
         AwaitingTurn,
         TurnInProgress,
@@ -17,125 +14,34 @@ namespace PoolGame.Gameplay.GameMode
         Finished
     }
 
+    [RequireComponent(typeof(Turn))]
     public class GameState : MonoBehaviour
     {
-        public Action<GameStateEnum> OnGameStateChanged;
+        public GameStateEnum Current { get; private set; }
         
-        [SerializeField] private PlayerShootingController playerShootingController;
-        [SerializeField] private MovingBallsChecker movingBallsChecker;
+        private Turn _turn;
 
-        private GameStateEnum _gameState;
-        public GameStateEnum CurrentGameState { get => _gameState;
-            private set
-            {
-                _gameState = value;
-                OnGameStateChanged?.Invoke(_gameState);
-            }
-        }
-
-        private int _turn;
-        public int Turn => _turn;
-
-        private readonly List<ITurnOutcomeHandler> _turnOutcomeHandlers = new();
-        private readonly List<IStartOutcomeHandler> _startOutcomeHandlers = new();
-
-        #region Lifecycle
-        
-        private void OnEnable()
+        private void Awake()
         {
-            if (playerShootingController)
-                playerShootingController.OnShotTaken += ShotTaken;
-            if (movingBallsChecker)
-                movingBallsChecker.OnBallsStoppedMoving += BallsStopped;
+            _turn = GetComponent<Turn>();
         }
 
-        private void OnDisable()
-        {
-            if (playerShootingController)
-                playerShootingController.OnShotTaken -= ShotTaken;
-            if (movingBallsChecker)
-                movingBallsChecker.OnBallsStoppedMoving -= BallsStopped;
-        }
+        public event Action<GameStateEnum> Changed;
 
-        private void Start()
+        public void Set(GameStateEnum state)
         {
-            CurrentGameState = GameStateEnum.AwaitingTurn;
-        }
-        
-        private void Update()
-        {
-            Logwin.Log("Turn" , Turn, "Game State");
-            Logwin.Log("Game State", CurrentGameState, "Game State");
-        }
-        
-        #endregion
-        
-        private void ShotTaken()
-        {
-            if (CurrentGameState == GameStateEnum.Finished)
-                return;
+            if (Current == state) return;
 
-            if (CurrentGameState == GameStateEnum.TurnInProgress)
-            {
-                CompleteTurn(GameStateEnum.TurnInProgress);
-                return;
-            }
-
-            if (CanEnterTurnInProgress(CurrentGameState))
-                CurrentGameState = GameStateEnum.TurnInProgress;
+            Current = state;
+            Changed?.Invoke(Current);
         }
         
-        private static bool CanEnterTurnInProgress(GameStateEnum state)
+        public void AdvanceTurn()
         {
-            return state is GameStateEnum.AwaitingTurn;
+            int turnIncrease = 1;
+            _turn.IncreaseAttribute(turnIncrease);
         }
         
-        private void BallsStopped()
-        {
-            if (CurrentGameState is GameStateEnum.Finished or not GameStateEnum.TurnInProgress)
-                return;
-
-            CompleteTurn(GameStateEnum.AwaitingTurn);
-        }
-
-        private void CompleteTurn(GameStateEnum nextState)
-        {
-            _turn++;
-            CurrentGameState = GameStateEnum.TurnEvaluation;
-            BeginTurnEvaluation(nextState);
-        }
-        
-        public void SetGameOver()
-        {
-            CurrentGameState = GameStateEnum.Finished;
-        }
-        
-        #region Evaluation
-
-        public void RegisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Add(handler);
-        public void UnregisterHandler(ITurnOutcomeHandler handler) => _turnOutcomeHandlers.Remove(handler);
-        
-        private void BeginTurnEvaluation(GameStateEnum nextState)
-        {
-            if (_turnOutcomeHandlers.Count == 0)
-            {
-                if (CurrentGameState != GameStateEnum.Finished)
-                    CurrentGameState = nextState;
-                return;
-            }
-
-            int remaining = _turnOutcomeHandlers.Count;
-            foreach (ITurnOutcomeHandler handler in _turnOutcomeHandlers)
-            {
-                handler.OnTurnEvaluate(() =>
-                {
-                    remaining--;
-                    if (remaining == 0 && CurrentGameState != GameStateEnum.Finished)
-                        CurrentGameState = nextState;
-                });
-            }
-        }
-        
-        #endregion
+        public int GetTurn() => _turn.GetAttributeValue();
     }
 }

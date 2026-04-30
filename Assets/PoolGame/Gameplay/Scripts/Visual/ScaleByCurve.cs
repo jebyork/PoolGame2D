@@ -18,7 +18,7 @@ namespace PoolGame.Gameplay.Visual
             StartCoroutine(ScaleOverTime());
         }
 
-        private IEnumerator ScaleOverTime()
+        public IEnumerator ScaleOverTime()
         {
             if (curve.length == 0)
                 yield break;

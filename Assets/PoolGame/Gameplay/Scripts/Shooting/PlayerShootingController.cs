@@ -16,7 +16,7 @@ namespace PoolGame.Gameplay.Shooting
         [SerializeField] private CalculateAimDataStrategy calculateAimDataStrategy;
         
         [Header("References")]
-        [SerializeField] private PotAllGameMode potAllGameMode;
+        [SerializeField] private GameController gameController;
         
         [Header("Shot Settings")]
         [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
@@ -35,8 +35,8 @@ namespace PoolGame.Gameplay.Shooting
         
         private void Awake()
         {
-            if (potAllGameMode == null)
-                potAllGameMode = FindFirstObjectByType<PotAllGameMode>();
+            if (gameController == null)
+                gameController = FindFirstObjectByType<GameController>();
         }
         
         private void Update()
@@ -52,7 +52,7 @@ namespace PoolGame.Gameplay.Shooting
 
         public void OnStartedAiming()
         {
-            if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())
+            if (gameController != null && !gameController.CanShoot())
                 return;
 
             Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
@@ -69,6 +69,12 @@ namespace PoolGame.Gameplay.Shooting
         {
             if (CanShootCurrentAim())
             {
+                if (gameController != null && !gameController.TryStartShot())
+                {
+                    _currentCalculationData.Shootable = null;
+                    return;
+                }
+
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
                 OnShotTaken?.Invoke();
             }
@@ -78,7 +84,7 @@ namespace PoolGame.Gameplay.Shooting
         
         public bool CanShootCurrentAim()
         {
-            if (potAllGameMode != null && !potAllGameMode.CanTakePlayerShot())
+            if (gameController != null && !gameController.CanShoot())
                 return false;
 
             if (_currentCalculationData.Shootable == null)

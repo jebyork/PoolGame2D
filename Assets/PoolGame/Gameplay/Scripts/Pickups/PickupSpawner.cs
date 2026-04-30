@@ -131,7 +131,7 @@ namespace PoolGame.Gameplay.Pickups
             Pickup pickup = pickupObject.GetComponent<Pickup>();
             if (pickup != null)
             {
-                pickup.SetEffect(pickupData.PickupEffect, pickupData.BallType, pickupData.anyBallType);
+                pickup.SetEffect(pickupData.PickupEffect, pickupData.BallType, pickupData.BroadcastMessage, pickupData.anyBallType);
             }
         }
     }

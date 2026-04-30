@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.GameMode;
-using PoolGame.Gameplay.GameMode.TurnEvaluation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace PoolGame.Gameplay.Pickups
 {
-    public class PickupManager : MonoBehaviour, ITurnOutcomeHandler
+    public class PickupManager : MonoBehaviour
     {
         public static event Action<PickupData> OnSpawnPickup;
-
-        [Header("Components")]
-        [SerializeField] private GameState gameState;
-
+        
         [Header("Spawn Rules")]
         [SerializeField] private bool spawnPickupsOverTime = true;
         [SerializeField] private Vector2Int turnsPerPickup = new(2, 4);
@@ -29,19 +24,7 @@ namespace PoolGame.Gameplay.Pickups
 
 
         #region Lifecycle
-
-        private void OnEnable()
-        {
-            if (gameState != null)
-                gameState.RegisterHandler(this);
-        }
-
-        private void OnDisable()
-        {
-            if (gameState != null)
-                gameState.UnregisterHandler(this);
-        }
-
+        
         private void Start()
         {
             SetDelayForNextPickup();
@@ -50,24 +33,22 @@ namespace PoolGame.Gameplay.Pickups
         #endregion
 
 
-        public void OnTurnEvaluate(Action onComplete)
+        public void EvaluateTurn(int currentTurn)
         {
             if (spawnPickupsOverTime && ShouldSpawnPickupThisTurn())
             {
                 SetDelayForNextPickup();
-                SpawnPickup();
+                SpawnPickup(currentTurn);
             }
             else
             {
                 _turnsSinceLastPickup++;
             }
-
-            onComplete();
         }
         
         private bool ShouldSpawnPickupThisTurn()
         {
-            if (gameState == null || _turnsPerPickup <= 0)
+            if (_turnsPerPickup <= 0)
                 return false;
 
             return _turnsSinceLastPickup >= _turnsPerPickup;
@@ -80,22 +61,22 @@ namespace PoolGame.Gameplay.Pickups
         }
 
         [ContextMenu("Spawn Pickup")]
-        public void SpawnPickup()
+        public void SpawnPickup(int currentTurn = 0)
         {
-            PickupData nextPickup = GetPickupData();
+            PickupData nextPickup = GetPickupData(currentTurn);
             if (nextPickup == null)
                 return;
 
-            RecordPickupSpawn(nextPickup);
+            RecordPickupSpawn(nextPickup, currentTurn);
             OnSpawnPickup?.Invoke(nextPickup);
         }
 
-        private PickupData GetPickupData()
+        private PickupData GetPickupData(int currentTurn = 0)
         {
             if (!HasPickupData())
                 return null;
 
-            float totalWeight = CalculateTotalWeight();
+            float totalWeight = CalculateTotalWeight(currentTurn);
             if (!(totalWeight <= 0f)) 
                 return GetWeightedPickup(totalWeight);
             
@@ -106,14 +87,14 @@ namespace PoolGame.Gameplay.Pickups
 
         private bool HasPickupData()
         {
-            if (pickupData != null && pickupData.Length > 0)
+            if (pickupData is { Length: > 0 })
                 return true;
 
             Debug.LogWarning("[PickupManager] No pickup data configured.", this);
             return false;
         }
 
-        private float CalculateTotalWeight()
+        private float CalculateTotalWeight(int currentTurn = 0)
         {
             float totalWeight = 0f;
 
@@ -122,16 +103,16 @@ namespace PoolGame.Gameplay.Pickups
                 if (data == null)
                     continue;
 
-                totalWeight += GetCombinedSpawnWeight(data);
+                totalWeight += GetCombinedSpawnWeight(data, currentTurn);
             }
 
             return totalWeight;
         }
         
-        private float GetCombinedSpawnWeight(PickupData data)
+        private float GetCombinedSpawnWeight(PickupData data, int currentTurn = 0)
         {
             float baseWeight = Mathf.Max(0f, data.SpawnRateWeight);
-            float timeWeight = GetTurnsSincePickupSpawned(data);
+            float timeWeight = GetTurnsSincePickupSpawned(data, currentTurn);
             return Mathf.Max(0f, Mathf.Lerp(baseWeight, timeWeight, timeBias));
         }
 
@@ -156,26 +137,32 @@ namespace PoolGame.Gameplay.Pickups
             return lastValidPickup;
         }
         
-        private int GetTurnsSincePickupSpawned(PickupData data)
+        private int GetTurnsSincePickupSpawned(PickupData data, int currentTurn = 0)
         {
             if (data == null)
                 return 0;
-
-            if (gameState == null)
-                return 1;
-
+            
             if (_lastSpawnTurnByPickup.TryGetValue(data, out int lastSpawnTurn))
-                return Mathf.Max(1, gameState.Turn - lastSpawnTurn);
+                return Mathf.Max(1, currentTurn - lastSpawnTurn);
 
-            return Mathf.Max(1, gameState.Turn + 1);
+            return Mathf.Max(1, currentTurn + 1);
         }
 
-        private void RecordPickupSpawn(PickupData data)
+        private void RecordPickupSpawn(PickupData data, int currentTurn = 0)
         {
-            if (data == null || gameState == null)
+            if (data == null)
                 return;
 
-            _lastSpawnTurnByPickup[data] = gameState.Turn;
+            _lastSpawnTurnByPickup[data] = currentTurn;
+        }
+
+        public void RemoveAll()
+        {
+            Pickup[] pickups = FindObjectsByType<Pickup>(FindObjectsSortMode.None);
+            foreach (Pickup pickup in pickups)
+            {
+                Destroy(pickup.gameObject);
+            }
         }
     }
 }

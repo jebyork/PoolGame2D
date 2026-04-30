@@ -55,32 +55,7 @@ namespace PoolGame.Gameplay.Ball
         
 
         #region Lifecycle
-
-        private void OnEnable()
-        {
-            if (playerShootingController)
-                playerShootingController.OnShotTaken += OnShotTaken;
-            if(gameState) 
-                gameState.OnGameStateChanged += OnGameStateChanged;
-        }
-
-        private void OnDisable()
-        {
-            if (playerShootingController)
-                playerShootingController.OnShotTaken -= OnShotTaken;
-            if(gameState) 
-                gameState.OnGameStateChanged -= OnGameStateChanged;
-        }
-
-        private void OnGameStateChanged(GameStateEnum state)
-        {
-            if (state != GameStateEnum.Finished)
-                return;
-
-            _ballsInPlay = false;
-            ForceStopAllBalls();
-        }
-
+        
         private void FixedUpdate()
         {
             if (!_ballsInPlay)
@@ -100,7 +75,7 @@ namespace PoolGame.Gameplay.Ball
 
         #region Public Functions
 
-        private void OnShotTaken()
+        public void NotifyShotTaken()
         {
             _ballsInPlay = true;
             _lastShotTime = Time.time;
@@ -108,10 +83,7 @@ namespace PoolGame.Gameplay.Ball
 
         public bool CanTakeShot()
         {
-            if (!_ballsInPlay)
-                return true;
-
-            return CanTakeMidTurnShot();
+            return !_ballsInPlay || CanTakeMidTurnShot();
         }
 
         #endregion

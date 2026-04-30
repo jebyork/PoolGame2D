@@ -1,3 +1,4 @@
+using System;
 using PoolGame.Gameplay.Ball;
 using PoolGame.Gameplay.Pickups.Effects;
 using UnityEngine;
@@ -10,7 +11,10 @@ namespace PoolGame.Gameplay.Pickups
         private PickupEffect _effect;
         private BallType _ballType;
         private bool _anyBall;
+        private string _broadcastMessage;
         
+		public static event Action<string> OnPickupAcquired;
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (_effect == null)
@@ -23,14 +27,16 @@ namespace PoolGame.Gameplay.Pickups
                 return;
             
             _effect.PlayEffect(gameObject);
+            OnPickupAcquired?.Invoke(_broadcastMessage);
             Destroy(gameObject);
         }
 
-        public void SetEffect(PickupEffect effect, BallType ballType, bool anyBall = false)
+        public void SetEffect(PickupEffect effect, BallType ballType, string broadcastMessage ,bool anyBall = false)
         {
             _anyBall = anyBall;
             _effect = effect;
             _ballType = ballType;
+            _broadcastMessage = broadcastMessage;
         }
     }
 }

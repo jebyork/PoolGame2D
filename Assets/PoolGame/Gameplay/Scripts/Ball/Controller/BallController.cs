@@ -76,7 +76,9 @@ namespace PoolGame.Gameplay.Ball
 
         public bool IsMovingAboveSpeed(float speedThreshold)
         {
-            return Rb2D != null && Rb2D.linearVelocity.magnitude > speedThreshold;
+            float speed = Rb2D.linearVelocity.magnitude;
+            Logwin.Log("Ball Speed", speed, $"{gameObject.name}: {gameObject.GetInstanceID()}");
+            return speed > speedThreshold;
         } 
     }
 }

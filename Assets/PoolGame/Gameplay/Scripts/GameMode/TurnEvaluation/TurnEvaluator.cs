@@ -7,10 +7,9 @@ using UnityEngine;
 
 namespace PoolGame.Gameplay.GameMode.TurnEvaluation
 {
-    public class TurnEvaluator : MonoBehaviour, ITurnOutcomeHandler
+    public class TurnEvaluator : MonoBehaviour
     {
         [Header("Components")]
-        [SerializeField] private GameState gameState;
         [SerializeField] private TurnModifiers turnModifiers;
         [SerializeField] private Life life;
         [SerializeField] private Score score;
@@ -23,13 +22,11 @@ namespace PoolGame.Gameplay.GameMode.TurnEvaluation
         private void OnEnable()
         {
             PocketController.OnBallPocketed += OnBallPocketed;
-            gameState.RegisterHandler(this);
         }
         
         private void OnDisable()
         {
-            PocketController.OnBallPocketed += OnBallPocketed;
-            gameState.UnregisterHandler(this);
+            PocketController.OnBallPocketed -= OnBallPocketed;
         }
 
         private void Update()
@@ -58,7 +55,7 @@ namespace PoolGame.Gameplay.GameMode.TurnEvaluation
             }
         }
 
-        public void OnTurnEvaluate(Action onComplete)
+        public void EvaluateTurn()
         {
             if (HasReasonToReduceLife())
                 life.DecreaseAttribute(Mathf.RoundToInt(turnModifiers.lifePunishment.Value));
@@ -70,7 +67,6 @@ namespace PoolGame.Gameplay.GameMode.TurnEvaluation
             _cueBallsPocketed = 0;
 
             turnModifiers.UpdateTurn();
-            onComplete();
         }
 
         private bool HasReasonToIncreaseScore()
