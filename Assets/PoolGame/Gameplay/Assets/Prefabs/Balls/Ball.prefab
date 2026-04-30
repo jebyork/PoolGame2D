@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6808663520552069104}
   - component: {fileID: 4942266444254975519}
   - component: {fileID: -8810914221846043614}
+  - component: {fileID: -3782966605980899058}
   m_Layer: 6
   m_Name: Ball
   m_TagString: Untagged
@@ -180,3 +181,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circle: {fileID: 640829178408627428}
+--- !u!114 &-3782966605980899058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8477776877701192545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28a5484048d42af99a2fe51663c367d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips:
+  - {fileID: 8300000, guid: 9a2b32055a1b8694ca2e32595e302f68, type: 3}
+  - {fileID: 8300000, guid: 3b46ac5f495c3924cafd1dbf4714aef2, type: 3}

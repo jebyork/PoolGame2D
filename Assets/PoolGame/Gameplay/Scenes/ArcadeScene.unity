@@ -2722,6 +2722,18 @@ PrefabInstance:
       propertyPath: potAllGameMode
       value: 
       objectReference: {fileID: 291832696}
+    - target: {fileID: 3219451295420590550, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: shotSound.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3219451295420590550, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: 'shotSound.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 9a2b32055a1b8694ca2e32595e302f68, type: 3}
+    - target: {fileID: 3219451295420590550, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: 'shotSound.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 3b46ac5f495c3924cafd1dbf4714aef2, type: 3}
     - target: {fileID: 6617115191545740724, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

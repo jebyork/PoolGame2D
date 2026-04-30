@@ -1,6 +1,7 @@
 using System;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
+using PoolGame.Game.Audio;
 using PoolGame.Gameplay.GameMode;
 using PoolGame.Gameplay.Shooting.Aiming;
 using PoolGame.Gameplay.Shooting.Targeting;
@@ -20,6 +21,8 @@ namespace PoolGame.Gameplay.Shooting
         
         [Header("Shot Settings")]
         [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
+        
+        [SerializeField] AudioClip[] shotSound;
         
         public event Action OnShotTaken;
         
@@ -77,6 +80,8 @@ namespace PoolGame.Gameplay.Shooting
 
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
                 OnShotTaken?.Invoke();
+                SoundManagerSO.PlaySound(shotSound, transform.position, 1f);
+                
             }
 
             _currentCalculationData.Shootable = null;

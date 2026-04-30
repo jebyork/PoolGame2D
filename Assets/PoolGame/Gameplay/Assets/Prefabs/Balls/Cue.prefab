@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2649243515292164298}
   - component: {fileID: 4717756750965139196}
   - component: {fileID: 7583279142685191342}
+  - component: {fileID: -8042006900140839936}
   m_Layer: 3
   m_Name: Cue
   m_TagString: Player
@@ -167,3 +168,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ballType: 0
   maxImpulse: 20
+--- !u!114 &-8042006900140839936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3766746412011436920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28a5484048d42af99a2fe51663c367d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips:
+  - {fileID: 8300000, guid: 9a2b32055a1b8694ca2e32595e302f68, type: 3}
+  - {fileID: 8300000, guid: 3b46ac5f495c3924cafd1dbf4714aef2, type: 3}
