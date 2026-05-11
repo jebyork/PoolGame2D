@@ -1,7 +1,6 @@
 using PoolGame.Core.Helpers;
 using PoolGame.Gameplay.Ball;
 using PoolGame.Gameplay.Ball.Spawning;
-using PoolGame.Gameplay.GameMode;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Pickups
@@ -131,7 +130,7 @@ namespace PoolGame.Gameplay.Pickups
             Pickup pickup = pickupObject.GetComponent<Pickup>();
             if (pickup != null)
             {
-                pickup.SetEffect(pickupData.PickupEffect, pickupData.BallType, pickupData.BroadcastMessage, pickupData.anyBallType);
+                pickup.SetEffect(pickupData.PickupEffect, pickupData.eBallType, pickupData.BroadcastMessage, pickupData.anyBallType);
             }
         }
     }

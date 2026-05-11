@@ -5,6 +5,6 @@ namespace PoolGame.Gameplay.Shooting.CanShoot
 {
     public abstract class CanShootStrategy : ScriptableObject
     {
-        public abstract bool CanShoot();
+        public abstract bool CanShoot(PlayerShootingController shotRequester);
     }
 }

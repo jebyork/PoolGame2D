@@ -6,16 +6,16 @@ namespace PoolGame.Game.Attribute
     [System.Serializable]
     public class ModifiableStat
     {
-        [SerializeField] private float baseValue;
+        [SerializeField] private int baseValue;
 
-        private readonly List<StatModifier> _modifiers = new();
+        readonly List<StatModifier> _modifiers = new();
 
-        public float Value => CalculateFinalValue();
+        public int Value => CalculateFinalValue();
 
-        private float CalculateFinalValue()
+        private int CalculateFinalValue()
         {
-            float additive = 0f;
-            float multiplier = 1f;
+	        int additive = 0;
+	        int multiplier = 1;
 
             foreach (StatModifier mod in _modifiers)
             {

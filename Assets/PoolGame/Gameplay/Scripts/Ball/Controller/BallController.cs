@@ -3,7 +3,7 @@ using PoolGame.Core.Helpers;
 using UnityEngine;
 
 [Serializable]
-public enum BallType
+public enum EBallType
 {
     CueBall,
     ObjectBall
@@ -13,8 +13,8 @@ namespace PoolGame.Gameplay.Ball
 {
     public class BallController : MonoBehaviour
     {
-        [SerializeField] private BallType ballType = BallType.ObjectBall;
-        public BallType GetBallType() => ballType;
+        [SerializeField] private EBallType eBallType = EBallType.ObjectBall;
+        public EBallType GetBallType() => eBallType;
 
         protected Rigidbody2D Rb2D;
         
@@ -69,7 +69,7 @@ namespace PoolGame.Gameplay.Ball
             Rb2D.angularVelocity = 0f;
         }
         
-        private void ResetState()
+        void ResetState()
         {
             ForceStop();
         }
@@ -77,7 +77,6 @@ namespace PoolGame.Gameplay.Ball
         public bool IsMovingAboveSpeed(float speedThreshold)
         {
             float speed = Rb2D.linearVelocity.magnitude;
-            Logwin.Log("Ball Speed", speed, $"{gameObject.name}: {gameObject.GetInstanceID()}");
             return speed > speedThreshold;
         } 
     }

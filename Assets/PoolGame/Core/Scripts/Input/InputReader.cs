@@ -9,7 +9,7 @@ namespace PoolGame.Core.Input
     public class InputReader : ScriptableObject , GameInputActions.IGameplayActions
     {
         private GameInputActions _gameInputActions;
-        [SerializeField] private ObservableVector2 mouseScreenPosition;
+        [SerializeField] ObservableVector2 mouseScreenPosition;
 
         
         private void OnEnable()

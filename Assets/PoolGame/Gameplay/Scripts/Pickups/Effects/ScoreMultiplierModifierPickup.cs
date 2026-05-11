@@ -1,5 +1,5 @@
 ﻿using PoolGame.Game.Attribute;
-using PoolGame.Gameplay.GameMode.TurnEvaluation;
+using PoolGame.Gameplay.GameFlow.TurnEvaluation;
 using UnityEngine;
 
 namespace PoolGame.Gameplay.Pickups.Effects

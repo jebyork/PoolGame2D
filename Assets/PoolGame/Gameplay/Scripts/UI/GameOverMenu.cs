@@ -1,6 +1,5 @@
-using System;
 using PoolGame.Gameplay.Attributes;
-using PoolGame.Gameplay.GameMode;
+using PoolGame.Gameplay.GameFlow;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,16 +7,16 @@ namespace PoolGame.Gameplay.UI
 {
     public class GameOverMenu : MonoBehaviour
     {
-        [SerializeField] private GameController gameController;
-        [SerializeField] private Score score;
+        [SerializeField] GameFlowController gameFlowController;
+        [SerializeField] Score score;
 
-        private VisualElement _endScreen;
-        private Button _restartButton;
-        private Button _quitButton;
-        private Label _scoreLabel;
+        VisualElement _endScreen;
+        Button _restartButton;
+        Button _quitButton;
+        Label _scoreLabel;
         
 
-        private void OnEnable()
+        void OnEnable()
         {
             UIDocument document = GetComponent<UIDocument>();
             VisualElement root = document.rootVisualElement;
@@ -31,7 +30,7 @@ namespace PoolGame.Gameplay.UI
             _quitButton.clicked += OnQuitClicked;
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             if (_restartButton != null)
                 _restartButton.clicked -= OnRestartClicked;
@@ -52,12 +51,12 @@ namespace PoolGame.Gameplay.UI
             _endScreen.style.display = DisplayStyle.None;
         }
 
-        private void OnRestartClicked()
+        void OnRestartClicked()
         {
-            gameController.RestartGame();
+            gameFlowController.ResetGame();
         }
 
-        private void OnQuitClicked()
+        void OnQuitClicked()
         {
             Application.Quit();
         }

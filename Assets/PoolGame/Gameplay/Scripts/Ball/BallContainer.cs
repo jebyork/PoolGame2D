@@ -7,13 +7,13 @@ namespace PoolGame.Gameplay.Ball
 {
     public class BallContainer : MonoBehaviour
     {
-         private readonly List<BallController> _pooledBalls = new();
-        private readonly List<BallController> _activeBalls = new();
+	    readonly List<BallController> _pooledBalls = new();
+        readonly List<BallController> _activeBalls = new();
 
         public IReadOnlyList<BallController> ActiveBalls => _activeBalls;
 
-        private readonly Dictionary<GameObject, Queue<BallController>> _poolsByPrefab = new();
-        private readonly Dictionary<BallController, GameObject> _prefabByBall = new();
+        readonly Dictionary<GameObject, Queue<BallController>> _poolsByPrefab = new();
+        readonly Dictionary<BallController, GameObject> _prefabByBall = new();
 
         #region Public Functions For Ball (De)Spawning
         public BallController SpawnBall(GameObject prefab, Vector3 position, Transform parent)
@@ -77,7 +77,7 @@ namespace PoolGame.Gameplay.Ball
         #endregion
         
         
-        private BallController GetAvailableBall(GameObject prefab)
+        BallController GetAvailableBall(GameObject prefab)
         {
             Queue<BallController> pool = GetOrCreatePool(prefab);
 
@@ -103,7 +103,7 @@ namespace PoolGame.Gameplay.Ball
             return ball;
         }
         
-        private Queue<BallController> GetOrCreatePool(GameObject prefab)
+        Queue<BallController> GetOrCreatePool(GameObject prefab)
         {
             if (_poolsByPrefab.TryGetValue(prefab, out Queue<BallController> pool))
             {
@@ -117,11 +117,11 @@ namespace PoolGame.Gameplay.Ball
 
         #region Public Functions For Getting Data
 
-        public BallController GetPooledBallOfType(BallType ballType)
+        public BallController GetPooledBallOfType(EBallType eBallType)
         {
             foreach (BallController ball in _pooledBalls)
             {
-                if (ball != null && ball.GetBallType() == ballType)
+                if (ball != null && ball.GetBallType() == eBallType)
                 {
                     return ball;
                 }
@@ -130,13 +130,13 @@ namespace PoolGame.Gameplay.Ball
             return null;
         }
 
-        public int GetActiveBallCount(BallType ballType)
+        public int GetActiveBallCount(EBallType eBallType)
         {
             int count = 0;
 
             foreach (BallController ball in _activeBalls)
             {
-                if (ball != null && ball.GetBallType() == ballType)
+                if (ball != null && ball.GetBallType() == eBallType)
                 {
                     count++;
                 }

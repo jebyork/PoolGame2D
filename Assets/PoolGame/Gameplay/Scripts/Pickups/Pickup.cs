@@ -9,7 +9,7 @@ namespace PoolGame.Gameplay.Pickups
     public class Pickup : MonoBehaviour
     {
         private PickupEffect _effect;
-        private BallType _ballType;
+        private EBallType _eBallType;
         private bool _anyBall;
         private string _broadcastMessage;
         
@@ -23,7 +23,7 @@ namespace PoolGame.Gameplay.Pickups
             if(!other.TryGetComponent(out BallController ball))
                 return;
 
-            if (ball.GetBallType() != _ballType || _anyBall) 
+            if (ball.GetBallType() != _eBallType || _anyBall) 
                 return;
             
             _effect.PlayEffect(gameObject);
@@ -31,11 +31,11 @@ namespace PoolGame.Gameplay.Pickups
             Destroy(gameObject);
         }
 
-        public void SetEffect(PickupEffect effect, BallType ballType, string broadcastMessage ,bool anyBall = false)
+        public void SetEffect(PickupEffect effect, EBallType eBallType, string broadcastMessage ,bool anyBall = false)
         {
             _anyBall = anyBall;
             _effect = effect;
-            _ballType = ballType;
+            _eBallType = eBallType;
             _broadcastMessage = broadcastMessage;
         }
     }

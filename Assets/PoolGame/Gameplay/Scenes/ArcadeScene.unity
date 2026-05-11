@@ -2723,6 +2723,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 291832696}
     - target: {fileID: 3219451295420590550, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
+      propertyPath: canShootStrategy
+      value: 
+      objectReference: {fileID: 11400000, guid: 96ac75e253cee474ea1be16b8db15843, type: 2}
+    - target: {fileID: 3219451295420590550, guid: 63323906e39f5e345abe11c41911ab9f, type: 3}
       propertyPath: shotSound.Array.size
       value: 2
       objectReference: {fileID: 0}

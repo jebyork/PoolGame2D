@@ -8,8 +8,8 @@ namespace PoolGame.Gameplay.Shooting.Targeting
     [CreateAssetMenu(fileName = "Get Shootable Under Mouse", menuName = "Shooting/Getting Shootable/Get Shootable Under Mouse")]
     public class GetShootableUnderMouse : GetShootableTargetStrategy
     {
-        [SerializeField] private LayerMask cueBallLayerMask;
-        [SerializeField] private ObservableVector2 mouseScreenPosition;
+        [SerializeField] LayerMask cueBallLayerMask;
+        [SerializeField] ObservableVector2 mouseScreenPosition;
         
         public override IShootable GetShootable()
         {

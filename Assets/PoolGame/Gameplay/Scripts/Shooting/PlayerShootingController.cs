@@ -2,8 +2,8 @@ using System;
 using PoolGame.Core.Helpers;
 using PoolGame.Core.Observers;
 using PoolGame.Game.Audio;
-using PoolGame.Gameplay.GameMode;
 using PoolGame.Gameplay.Shooting.Aiming;
+using PoolGame.Gameplay.Shooting.CanShoot;
 using PoolGame.Gameplay.Shooting.Targeting;
 using UnityEngine;
 
@@ -12,23 +12,16 @@ namespace PoolGame.Gameplay.Shooting
     public class PlayerShootingController : MonoBehaviour
     {
         [Header("Strategies")]
-        [SerializeField] private GetShootableTargetStrategy getShootableTargetStrategy;
-        [SerializeField] private ObservableVector2 mouseScreenPosition;
-        [SerializeField] private CalculateAimDataStrategy calculateAimDataStrategy;
-        
-        [Header("References")]
-        [SerializeField] private GameController gameController;
-        
-        [Header("Shot Settings")]
-        [SerializeField, Range(0f, 1f)] private float minShotPower = 0.05f;
+        [SerializeField] GetShootableTargetStrategy getShootableTargetStrategy;
+        [SerializeField] ObservableVector2 mouseScreenPosition;
+        [SerializeField] CalculateAimDataStrategy calculateAimDataStrategy;
+        [SerializeField] CanShootStrategy canShootStrategy;
         
         [SerializeField] AudioClip[] shotSound;
-        
         public event Action OnShotTaken;
         
-        private AimingCalculationData _currentCalculationData;
-        private AimingData _currentAimingData;
-        
+        AimingCalculationData _currentCalculationData;
+        AimingData _currentAimingData;
 
         public AimingCalculationData CurrentCalculationData => _currentCalculationData;
         public AimingData CurrentAimingData => _currentAimingData;
@@ -36,13 +29,7 @@ namespace PoolGame.Gameplay.Shooting
 
         #region Lifecycle
         
-        private void Awake()
-        {
-            if (gameController == null)
-                gameController = FindFirstObjectByType<GameController>();
-        }
-        
-        private void Update()
+        void Update()
         {
             if (_currentCalculationData.Shootable == null)
                 return;
@@ -52,12 +39,12 @@ namespace PoolGame.Gameplay.Shooting
         }
         
         #endregion
+        
+        public float GetAimPower() => _currentAimingData.Power01;
+        public IShootable GetShootable() => _currentCalculationData.Shootable;
 
         public void OnStartedAiming()
         {
-            if (gameController != null && !gameController.CanShoot())
-                return;
-
             Vector3 worldPoint = MyHelpers.GetScreenToWorldPosition(mouseScreenPosition.Value);
             IShootable shootable = getShootableTargetStrategy.GetShootable();
             _currentCalculationData = new AimingCalculationData
@@ -72,30 +59,16 @@ namespace PoolGame.Gameplay.Shooting
         {
             if (CanShootCurrentAim())
             {
-                if (gameController != null && !gameController.TryStartShot())
-                {
-                    _currentCalculationData.Shootable = null;
-                    return;
-                }
-
                 _currentCalculationData.Shootable.Shoot(_currentAimingData);
                 OnShotTaken?.Invoke();
                 SoundManagerSO.PlaySound(shotSound, transform.position, 1f);
-                
             }
-
             _currentCalculationData.Shootable = null;
         }
         
         public bool CanShootCurrentAim()
         {
-            if (gameController != null && !gameController.CanShoot())
-                return false;
-
-            if (_currentCalculationData.Shootable == null)
-                return false;
-
-            return _currentAimingData.Power01 >= minShotPower;
+            return canShootStrategy.CanShoot(this);
         }
     }
 }

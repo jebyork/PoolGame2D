@@ -165,5 +165,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1f04bd756d4f0e964217f04081433c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballType: 0
+  eBallType: 0
   maxImpulse: 20

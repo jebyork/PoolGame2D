@@ -9,7 +9,7 @@ namespace PoolGame.Gameplay.Pickups
         public Sprite Visual;
         public PickupEffect PickupEffect;
         public string BroadcastMessage;
-        public BallType BallType;
+        public EBallType eBallType;
         public bool anyBallType;
         public float SpawnRateWeight = 1;
         
